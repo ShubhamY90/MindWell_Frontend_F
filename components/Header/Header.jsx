@@ -91,9 +91,7 @@ export const Header = () => {
               {/* Desktop Navigation */}
               <nav className="hidden lg:flex items-center gap-1">
                 <div className="flex items-center gap-1 px-4 py-1.5 bg-white/5 rounded-full backdrop-blur-sm border border-white/10">
-                  <NavItem icon={Stars} label="24/7 Chat" to="/chatbot" />
-                  <NavItem icon={Atom} label="Mood Tracker" to="/therapies" />
-                  <NavItem icon={Satellite} label="Hive Network" to="/community" />
+                  <NavItem icon={Stars} label="Students" to="/psychiatrist" />
                 </div>
               </nav>
 
@@ -143,9 +141,7 @@ export const Header = () => {
           ></div>
           <div className="fixed top-16 left-4 right-4 bg-gradient-to-b from-gray-900/95 to-purple-900/95 backdrop-blur-xl border border-indigo-400/20 rounded-2xl shadow-2xl p-4">
             <div className="space-y-2">
-              <MobileNavItem icon={Stars} label="24/7 Chat" to="/chatbot" />
-              <MobileNavItem icon={Atom} label="Mood Tracker" to="/therapies" />
-              <MobileNavItem icon={Satellite} label="Hive Network" to="/community" />
+              <MobileNavItem icon={Stars} label="Students" to="/psychiatrist" />
               <hr className="border-white/10" />
               <div onClick={handleAuthAction}>
                 <MobileNavItem 
