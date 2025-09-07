@@ -67,17 +67,23 @@ const ChatWindow = ({ darkMode, toggleDarkMode }) => {
       if (!res.ok) throw new Error(data.error || 'Failed to load session');
   
       // 🔐 Decrypt history
-      const decryptedHistory = await Promise.all(
-        data.session.history.map(async (msg) => ({
-          role: msg.role,
-          parts: [{ text: await decryptText(msg.parts[0].text) }],
-          videos: msg.videos || [],
-        }))
-      );
+      // const decryptedHistory = await Promise.all(
+      //   data.session.history.map(async (msg) => ({
+      //     role: msg.role,
+      //     parts: [{ text: await decryptText(msg.parts[0].text) }],
+      //     videos: msg.videos || [],
+      //   }))
+      // );
+
+      const history = data.session.history.map((msg) => ({
+      role: msg.role,
+      parts: [{ text: msg.parts[0].text }], 
+      videos: msg.videos || [],
+      }));
   
       loadSession({
         sessionRef: data.session.sessionRef,
-        history: decryptedHistory,
+        history,
       });
   
       setShowHistory(false);
