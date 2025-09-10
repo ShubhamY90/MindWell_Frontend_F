@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const PsychiatristAuth = () => {
   const [email, setEmail] = useState('');
@@ -8,7 +8,9 @@ const PsychiatristAuth = () => {
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // Add this
 
+  // Update the handleSubmit function:
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -33,7 +35,10 @@ const PsychiatristAuth = () => {
       if (data.user && data.user.college) {
         localStorage.setItem('psy_college', data.user.college);
       }
-      navigate('/psychiatrist');
+      
+      // Get the redirect path from location state or default to psychiatrist dashboard
+      const from = location.state?.from?.pathname || '/psychiatrist';
+      navigate(from, { replace: true });
     } catch (err) {
       setMessage(err.message);
     } finally {

@@ -1,5 +1,5 @@
-import React, { Suspense,useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { Suspense, useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Test from '../pages/Test'; 
 import { Header } from '../components/Header/Header';
@@ -19,6 +19,19 @@ import PsychiatristAuth from '../pages/PsychiatristAuth';
 import PsychiatristDashboard from '../pages/PsychiatristDashboard';
 import AddRequest from '../pages/AddRequest';
 import ViewRequests from '../pages/ViewRequests';
+
+// Add this component for protected routes
+const ProtectedPsychiatristRoute = ({ children }) => {
+  const location = useLocation();
+  const token = localStorage.getItem('psy_token');
+  
+  if (!token) {
+    // Redirect to psychiatrist login with the return path
+    return <Navigate to="/psychiatrist-auth" state={{ from: location }} replace />;
+  }
+  
+  return children;
+};
 
 function AppShell() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -71,14 +84,20 @@ function AppShell() {
             <Route path="/psychiatrist" element={<PsychiatristDashboard />} />
             {/* Registration removed; credentials are pre-provisioned by moderator */}
             <Route path="/add-request" element={<AddRequest />} />
-            <Route path="/view-request" element={<ViewRequests />} />
+            <Route 
+              path="/view-requests" 
+              element={
+                <ProtectedPsychiatristRoute>
+                  <ViewRequests />
+                </ProtectedPsychiatristRoute>
+              } 
+            />
             
-            if (currentUser){currentUser && (
+            {currentUser ? (
               <Route path="/chatbot" element={ <ChatWindow user={currentUser} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
-            )}
-            else{
+            ) : (
               <Route path="/auth" element={<Auth />} />
-            }
+            )}
 
           </Routes>
         </Suspense>

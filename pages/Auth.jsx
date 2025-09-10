@@ -10,7 +10,7 @@ import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
-import { User, Brain, Lock, Mail, Eye, EyeOff, ArrowRight, Sparkles, Shield } from 'lucide-react';
+import { User, Brain, Lock, Mail, Eye, EyeOff, ArrowRight, Sparkles, Shield, GraduationCap } from 'lucide-react';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -23,17 +23,21 @@ export default function Auth() {
   const [isHovered, setIsHovered] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
+  const [college, setCollege] = useState('');
 
   const navigate = useNavigate();
 
-  const handleSignUp = async (email, password, name) => {
+  const handleSignUp = async (email, password, name, college) => {
     try {
       const userCredential = await createUser(email, password);
       await setDoc(doc(db, "users", userCredential.user.uid), {
         name,
         email,
+        college,
         userId: userCredential.user.uid,
-        provider: "email"
+        provider: "email",
+        createdAt: new Date(),
+        lastLogin: new Date()
       });
       return userCredential;
     } catch (error) {
@@ -59,6 +63,7 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setError('');
+    
     try {
       const result = await signInWithGoogle();
       const user = result.user;
@@ -67,9 +72,11 @@ export default function Auth() {
       const userDoc = await getDoc(userRef);
 
       if (!userDoc.exists()) {
+        // For new users signing up with Google, use the college from state
         await setDoc(userRef, {
           email: user.email,
           name: user.displayName,
+          college: college || "Not specified", // Use college from state or default
           userId: user.uid,
           createdAt: new Date(),
           lastLogin: new Date(),
@@ -112,8 +119,9 @@ export default function Auth() {
     try {
       if (isSignUp) {
         if (!name) throw new Error('Please enter your name');
+        if (!college) throw new Error('Please enter your college name');
         if (!email || !password) throw new Error('Please fill in all fields');
-        await handleSignUp(email, password, name);
+        await handleSignUp(email, password, name, college);
       } else {
         if (!email || !password) throw new Error('Please fill in all fields');
         await signInWithEmail(email, password);
@@ -232,7 +240,7 @@ export default function Auth() {
           {/* Form Area */}
           <div className="p-6 relative">
             {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm backdrop-blur-sm animate-slide-in shadow-sm">
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm backdrop-blur-sm animate-slade-in shadow-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
                   {error}
@@ -310,27 +318,49 @@ export default function Auth() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-                {/* Name field - only shown during sign up */}
+                {/* Name and College fields - only shown during sign up */}
                 {isSignUp && (
-                  <div className="space-y-3">
-                    <label className="block text-gray-700 text-sm font-medium tracking-wide">
-                      Full Name
-                    </label>
-                    <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-indigo-400/70 group-focus-within:text-indigo-600 transition-colors duration-300" />
+                  <>
+                    <div className="space-y-3">
+                      <label className="block text-gray-700 text-sm font-medium tracking-wide">
+                        Full Name
+                      </label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-indigo-400/70 group-focus-within:text-indigo-600 transition-colors duration-300" />
+                        </div>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="pl-12 w-full p-4 bg-white/60 border border-indigo-200/60 rounded-2xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/70 outline-none transition-all duration-300 text-gray-800 placeholder-gray-400 backdrop-blur-sm hover:bg-white/80 shadow-sm"
+                          placeholder="Your name"
+                          required={isSignUp}
+                        />
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-100/20 to-purple-100/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                       </div>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="pl-12 w-full p-4 bg-white/60 border border-indigo-200/60 rounded-2xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/70 outline-none transition-all duration-300 text-gray-800 placeholder-gray-400 backdrop-blur-sm hover:bg-white/80 shadow-sm"
-                        placeholder="Your name"
-                        required={isSignUp}
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-100/20 to-purple-100/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     </div>
-                  </div>
+
+                    <div className="space-y-3">
+                      <label className="block text-gray-700 text-sm font-medium tracking-wide">
+                        College/University
+                      </label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <GraduationCap className="h-5 w-5 text-indigo-400/70 group-focus-within:text-indigo-600 transition-colors duration-300" />
+                        </div>
+                        <input
+                          type="text"
+                          value={college}
+                          onChange={(e) => setCollege(e.target.value)}
+                          className="pl-12 w-full p-4 bg-white/60 border border-indigo-200/60 rounded-2xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/70 outline-none transition-all duration-300 text-gray-800 placeholder-gray-400 backdrop-blur-sm hover:bg-white/80 shadow-sm"
+                          placeholder="Your college or university"
+                          required={isSignUp}
+                        />
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-100/20 to-purple-100/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      </div>
+                    </div>
+                  </>
                 )}
                 
                 <div className="space-y-3">

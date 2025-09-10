@@ -16,7 +16,8 @@ import {
   Clock,
   Star,
   Volume2,
-  VolumeX
+  VolumeX,
+  UserCheck
 } from 'lucide-react';
 
 export default function Home() {
@@ -59,6 +60,10 @@ export default function Home() {
 
   const handleChatNow = () => {
     navigate("/chatbot");
+  };
+
+  const handleConnectWithPsychiatrist = () => {
+    navigate("/add-request");
   };
 
   const handleMoodAnswer = (answerIndex) => {
@@ -274,6 +279,17 @@ export default function Home() {
                 Explore Resources
               </a>
             </div>
+
+            {/* Connect with Psychiatrist Button */}
+            <div className="mt-6 sm:mt-8" data-aos="fade-up" data-aos-delay="400">
+              <button
+                onClick={handleConnectWithPsychiatrist}
+                className="bg-white/20 backdrop-blur-sm border-2 border-white text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-full text-sm sm:text-base font-medium hover:bg-white/30 transition-all duration-200 inline-flex items-center"
+              >
+                <UserCheck className="h-3 sm:h-4 w-3 sm:w-4 mr-2" />
+                Connect with Psychiatrist
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -454,15 +470,27 @@ export default function Home() {
             You're never alone — and your peace of mind matters.
           </p>
 
-          <button
-            onClick={handleChatNow}
-            className="bg-white text-purple-600 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-full text-sm sm:text-base lg:text-lg font-semibold shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center mx-auto relative z-20"
-            data-aos="fade-up"
-            data-aos-delay="350"
-          >
-            <MessageCircle className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 mr-2 text-purple-600" />
-            Begin Your Journey
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-20">
+            <button
+              onClick={handleChatNow}
+              className="bg-white text-purple-600 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-full text-sm sm:text-base lg:text-lg font-semibold shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center"
+              data-aos="fade-up"
+              data-aos-delay="350"
+            >
+              <MessageCircle className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 mr-2 text-purple-600" />
+              Begin Your Journey
+            </button>
+            
+            <button
+              onClick={handleConnectWithPsychiatrist}
+              className="bg-transparent border-2 border-white text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-full text-sm sm:text-base lg:text-lg font-semibold hover:bg-white/10 transition-all duration-300 flex items-center"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <UserCheck className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 mr-2" />
+              Connect with Professional
+            </button>
+          </div>
         </section>
       </main>
 
@@ -501,11 +529,11 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-800 mb-4">Legal</h4>
+              <h4 className="font-semibold text-gray-800 mb-4">Professional Help</h4>
               <ul className="space-y-2 text-sm text-gray-600">
+                <li><Link to="/add-request" className="hover:text-purple-600">Connect with Psychiatrist</Link></li>
                 <li><Link to="/privacy-policy" className="hover:text-purple-600">Privacy Policy</Link></li>
                 <li><Link to="/terms-of-service" className="hover:text-purple-600">Terms of Service</Link></li>
-                <li><Link to="/cookie-policy" className="hover:text-purple-600">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
