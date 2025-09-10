@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Card = ({ title, children, icon, count }) => (
@@ -123,44 +123,75 @@ const PsychiatristDashboard = () => {
     navigate('/psychiatrist-auth');
   };
 
-  const [pendingRequests] = useState([
-    {
-      id: 1,
-      studentName: "Alex Johnson",
-      email: "alex.j@university.edu",
-      reason: "Experiencing anxiety and stress related to academic performance and social situations. Looking for guidance and support.",
-      urgency: "Medium Priority",
-      requestDate: "2 hours ago"
-    },
-    {
-      id: 2,
-      studentName: "Sam Wilson",
-      email: "sam.w@university.edu",
-      reason: "Dealing with depression and feeling overwhelmed. Need someone to talk to about coping strategies.",
-      urgency: "High Priority",
-      requestDate: "5 hours ago"
-    }
-  ]);
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [acceptedRequests, setAcceptedRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const college = typeof window !== 'undefined' ? localStorage.getItem('psy_college') : null;
+  const psychiatristId = typeof window !== 'undefined' ? localStorage.getItem('psy_email') : null;
 
-  const [acceptedRequests] = useState([
-    {
-      id: 3,
-      studentName: "Jordan Smith",
-      email: "jordan.s@university.edu",
-      reason: "Working through relationship issues and self-esteem concerns.",
-      urgency: "Low Priority",
-      requestDate: "1 day ago"
-    }
-  ]);
+  const fetchRequests = async () => {
+    if (!college) return;
+    setLoading(true);
+    try {
+      const [pendingRes, acceptedRes] = await Promise.all([
+        fetch(`http://localhost:4000/api/request/college/${encodeURIComponent(college)}?status=pending`),
+        fetch(`http://localhost:4000/api/request/college/${encodeURIComponent(college)}?status=accepted`),
+      ]);
 
-  const handleAction = (requestId, action) => {
-    console.log(`${action} request ${requestId}`);
-    // Handle the action logic here
+      const [pendingData, acceptedData] = await Promise.all([pendingRes.json(), acceptedRes.json()]);
+      if (!pendingRes.ok) throw new Error(pendingData.error || 'Failed to load pending');
+      if (!acceptedRes.ok) throw new Error(acceptedData.error || 'Failed to load accepted');
+
+      const mapToCard = (r) => ({
+        id: r.id,
+        studentName: r.studentName || 'Unknown',
+        email: r.studentEmail || '',
+        reason: r.message || '',
+        urgency: r.status === 'pending' ? 'Awaiting response' : 'Accepted',
+        requestDate: new Date(r.createdAt).toLocaleString(),
+      });
+
+      setPendingRequests((pendingData.requests || []).map(mapToCard));
+      setAcceptedRequests((acceptedData.requests || []).map(mapToCard));
+    } catch (err) {
+      console.error('Fetch requests error:', err);
+      setPendingRequests([]);
+      setAcceptedRequests([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [college]);
+
+  const handleAction = async (requestId, action) => {
+    if (action === 'message') {
+      // placeholder for chat navigation
+      return;
+    }
+    if (!psychiatristId) return;
+    try {
+      const res = await fetch(`http://localhost:4000/api/request/respond-atomic/${requestId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ psychiatristId, action: action === 'decline' ? 'reject' : action }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to respond');
+      }
+      await fetchRequests();
+    } catch (err) {
+      console.error('Respond error:', err);
+      await fetchRequests();
+    }
   };
 
   const handleRefresh = () => {
-    console.log('Refreshing requests...');
-    // Handle refresh logic here
+    fetchRequests();
   };
 
   return (
@@ -227,7 +258,7 @@ const PsychiatristDashboard = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh
+              {loading ? 'Loading...' : 'Refresh'}
             </button>
           </div>
         </div>

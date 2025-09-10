@@ -27,6 +27,12 @@ const PsychiatristAuth = () => {
       if (data.user && data.user.name) {
         localStorage.setItem('psy_name', data.user.name);
       }
+      if (data.user && data.user.email) {
+        localStorage.setItem('psy_email', data.user.email);
+      }
+      if (data.user && data.user.college) {
+        localStorage.setItem('psy_college', data.user.college);
+      }
       navigate('/psychiatrist');
     } catch (err) {
       setMessage(err.message);
