@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, History, Plus } from 'lucide-react';
-import { signOut } from 'firebase/auth';
 import { getAuth } from 'firebase/auth';
-import { auth } from '../../context/firebase/firebase';
 import useChat from '../hooks/useChat';
 import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
@@ -11,12 +9,12 @@ import LoadingIndicator from './LoadingIndicator';
 import SessionPanel from './SessionPanel';
 // import { decryptText } from '../../src/utils/encryption';
 
-const ChatWindow = ({ darkMode,currentUser }) => {
+const ChatWindow = ({ darkMode,currentUser,checkingAuth }) => {
   const [showHistory, setShowHistory] = useState(true);
   const [sessions, setSessions] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const messagesEndRef = useRef(null);
-  const navigator=useNavigate();
+  const navigate=useNavigate();
 
   const {
     messages,
@@ -29,6 +27,12 @@ const ChatWindow = ({ darkMode,currentUser }) => {
     clearError,
   } = useChat();
 
+  useEffect(() => {
+  if (!checkingAuth && !currentUser) {
+    navigate('/auth');
+  }
+}, [checkingAuth, currentUser, navigator]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -37,11 +41,18 @@ const ChatWindow = ({ darkMode,currentUser }) => {
     scrollToBottom();
   }, [messages, showHistory]);
 
-useEffect(() => {
-  if (!currentUser) {
-    navigator('/auth');
+  if (checkingAuth) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-blue-400 to-black text-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-400"></div>
+        <p className="mt-4 text-lg font-medium animate-pulse">
+          Checking authentication...
+        </p>
+      </div>
+    );
   }
-}, [currentUser, navigator]);
+
+
 
   
   const fetchSessions = async () => {
@@ -120,7 +131,6 @@ useEffect(() => {
     }
   };
 
-  const handleLogout = () => signOut(auth);
   const handleShowHistory = () => {
     setShowHistory(true);
     fetchSessions();
