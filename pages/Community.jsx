@@ -199,18 +199,53 @@ export default function CommunityPage() {
   };
 
   const handlePostSubmit = async () => {
+    if (!newPostContent.trim() || !currentUser) return;
+    
+    setIsLoading(true);
+    try {
+      await addDoc(collection(db, "posts"), {
+        username: postAnonymously ? "Anonymous" : currentUser.username,
+        userInitials: postAnonymously ? "A" : currentUser.initials,
+        anonymous: postAnonymously,
+        mood: selectedMood,
+        content: newPostContent,
+        tags: newPostContent.match(/#\w+/g) || [],
+        likes: 0,
+        comments: 0,
+        reactions: {},
+        timestamp: serverTimestamp(),
+        userId: currentUser.id
+      });
+      
+      setNewPostContent("");
+      setSelectedMood("neutral");
+      setPostAnonymously(false);
+      setShowCreateModal(false);
+    } catch (error) {
+      console.error("Error adding post: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /* 
+  const handlePostSubmit = async () => {
   if (!newPostContent.trim() || !currentUser) return;
 
   setIsLoading(true);
   try {
     // 🔹 Step 1: Call moderation API
-      const response = await fetch("http://127.0.0.1:8000/moderate", {
+    const response = await fetch("http://127.0.0.1:8000/moderate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ text: newPostContent }),
     });
+
+    if (!response.ok) {
+      throw new Error("Failed to call moderation API");
+    }
 
     const moderation = await response.json();
 
@@ -248,6 +283,7 @@ export default function CommunityPage() {
     setIsLoading(false);
   }
 };
+  */
 
   const handleLike = async (postId) => {
     if (!currentUser) return;
