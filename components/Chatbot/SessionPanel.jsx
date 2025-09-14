@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 import SessionList from './SessionList';
 import useSessions from '../hooks/useSessions';
+import { API_BASE_URL } from '../../src/utils/api';
 
 const SessionsPanel = ({ onSelectSession, darkMode }) => {
     const [idToken, setIdToken] = useState(null);
@@ -31,7 +32,7 @@ const SessionsPanel = ({ onSelectSession, darkMode }) => {
 
             const idToken = await currentUser.getIdToken();
 
-            const response = await fetch(`https://mindwell-backend-ngfl.onrender.com/api/sessions/${sessionRef}`, {
+            const response = await fetch(`${API_BASE_URL}/api/sessions/${sessionRef}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${idToken}`

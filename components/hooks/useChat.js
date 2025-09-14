@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 // import { speakText } from '../services/TextToSpeech';
 import { getAuth } from 'firebase/auth';
+import { API_BASE_URL } from '../../src/utils/api';
 
 const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
   const [messages, setMessages] = useState([]);
@@ -17,7 +18,7 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
 
     const idToken = await currentUser.getIdToken();
 
-    const response = await fetch('https://mindwell-backend-ngfl.onrender.com/api/chat', {
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

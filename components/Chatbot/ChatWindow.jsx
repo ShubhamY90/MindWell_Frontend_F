@@ -7,6 +7,7 @@ import ChatInput from './ChatInput';
 import MessageBubble from './MessageBubble';
 import LoadingIndicator from './LoadingIndicator';
 import SessionPanel from './SessionPanel';
+import { API_BASE_URL } from '../../src/utils/api';
 // import { decryptText } from '../../src/utils/encryption';
 
 const ChatWindow = ({ darkMode,currentUser,checkingAuth }) => {
@@ -61,7 +62,7 @@ const ChatWindow = ({ darkMode,currentUser,checkingAuth }) => {
       const currentUser = getAuth().currentUser;
       if (!currentUser) throw new Error('User not authenticated');
       const idToken = await currentUser.getIdToken();
-      const response = await fetch('https://mindwell-backend-ngfl.onrender.com/api/sessions', {
+      const response = await fetch(`${API_BASE_URL}/api/sessions`, {
         headers: { Authorization: `Bearer ${idToken}` },
       });
       const data = await response.json();
@@ -79,7 +80,7 @@ const ChatWindow = ({ darkMode,currentUser,checkingAuth }) => {
       const currentUser = getAuth().currentUser;
       if (!currentUser) throw new Error('User not authenticated');
       const idToken = await currentUser.getIdToken();
-      const res = await fetch(`https://mindwell-backend-ngfl.onrender.com/api/sessions/${sessionRef}`, {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/${sessionRef}`, {
         headers: { Authorization: `Bearer ${idToken}` },
       });
       const data = await res.json();
@@ -117,7 +118,7 @@ const ChatWindow = ({ darkMode,currentUser,checkingAuth }) => {
       const currentUser = getAuth().currentUser;
       if (!currentUser) throw new Error('User not authenticated');
       const idToken = await currentUser.getIdToken();
-      const response = await fetch(`https://mindwell-backend-ngfl.onrender.com/api/sessions/${sessionRef}`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${sessionRef}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${idToken}` },
       });

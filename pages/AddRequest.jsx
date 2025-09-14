@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../context/firebase/firebase";
+import { API_BASE_URL } from "../src/utils/api";
 
 const AddRequest = () => {
   const [studentId, setStudentId] = useState("");
@@ -108,7 +109,7 @@ const AddRequest = () => {
     setSuccess("");
 
     try {
-      const res = await fetch("https://mindwell-backend-ngfl.onrender.com/api/request/create", {
+      const res = await fetch(`${API_BASE_URL}/api/request/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

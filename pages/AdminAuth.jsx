@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../src/hooks/useAuth';
 import { API_BASE_URL } from '../src/utils/api';
 
-const PsychiatristAuth = () => {
+const AdminAuth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,20 +15,19 @@ const PsychiatristAuth = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user && user.role === 'psychiatrist') {
-      const from = location.state?.from?.pathname || '/psychiatrist';
+    if (user && user.role === 'admin') {
+      const from = location.state?.from?.pathname || '/view-requests';
       navigate(from, { replace: true });
     }
   }, [user, navigate, location]);
 
-  // Update the handleSubmit function:
+  // Handle admin login
   const handleSubmit = async (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Prevent any event bubbling
     setLoading(true);
-    setMessage(''); 
+    setMessage('');
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/psychiatrist/login`, {
+      const res = await fetch(`${API_BASE_URL}/api/auth/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -38,18 +37,16 @@ const PsychiatristAuth = () => {
         throw new Error(data.error || 'Login failed');
       }
       
-      // Use the login function from useAuth hook 
+      // Use the login function from useAuth hook
       login({
-        role: 'psychiatrist',
+        role: 'admin',
         name: data.user.name,
         email: data.user.email,
-        college: data.user.college,
         token: data.token
       });
       
-      // Get the redirect path from location state or default to psychiatrist dashboard
-      const from = location.state?.from?.pathname || '/psychiatrist';
-      console.log('🩺 PsychiatristAuth - redirecting to:', from);
+      // Get the redirect path from location state or default to view-requests
+      const from = location.state?.from?.pathname || '/view-requests';
       navigate(from, { replace: true });
     } catch (err) {
       setMessage(err.message);
@@ -73,61 +70,60 @@ const PsychiatristAuth = () => {
         {/* Glassmorphism Card */}
         <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
           {/* Header Section */}
-          <div className="relative bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 p-8 text-white">
+          <div className="relative bg-gradient-to-r from-red-500 via-orange-600 to-yellow-500 p-8 text-white">
             <div className="absolute inset-0 bg-black/5"></div>
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-white/15 rounded-2xl mb-4 backdrop-blur-sm border border-white/20">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 17H9.154a3.374 3.374 0 00-1.849-.553L6.757 16z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold mb-2">Welcome Back, Doctor 👨‍⚕️</h1>
+              <h1 className="text-2xl font-bold mb-2">Admin Access 🔐</h1>
               <p className="text-white/90 text-sm">
-                Ready to support mental wellness today? 💙
+                Secure administrative panel access
               </p>
             </div>
           </div>
 
           {/* Form Section */}
           <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                   </svg>
-                  Email Address
+                  Admin Email
                 </label>
                 <div className="relative group">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-gray-50/80 border-0 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:bg-white/90 transition-all duration-300 shadow-sm group-hover:shadow-md"
-                    placeholder="your.email@mindhealth.com"
+                    className="w-full bg-gray-50/80 border-0 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:bg-white/90 transition-all duration-300 shadow-sm group-hover:shadow-md"
+                    placeholder="Enter admin email"
                     required
                   />
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/10 via-orange-500/10 to-yellow-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <svg className="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  Password
+                  Admin Password
                 </label>
                 <div className="relative group">
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-gray-50/80 border-0 rounded-xl px-4 py-3 pr-12 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:bg-white/90 transition-all duration-300 shadow-sm group-hover:shadow-md"
-                    placeholder="Enter your secure password"
-                    autoComplete="off"
+                    className="w-full bg-gray-50/80 border-0 rounded-xl px-4 py-3 pr-12 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:bg-white/90 transition-all duration-300 shadow-sm group-hover:shadow-md"
+                    placeholder="Enter admin password"
                     required
                   />
                   <button
@@ -146,7 +142,7 @@ const PsychiatristAuth = () => {
                       </svg>
                     )}
                   </button>
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/10 via-orange-500/10 to-yellow-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               </div>
 
@@ -154,7 +150,7 @@ const PsychiatristAuth = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-indigo-600 hover:via-purple-700 hover:to-pink-600 text-white py-3.5 rounded-xl font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl transform hover:-translate-y-1 active:translate-y-0 relative overflow-hidden group"
+                className="w-full bg-gradient-to-r from-red-500 via-orange-600 to-yellow-500 hover:from-red-600 hover:via-orange-700 hover:to-yellow-600 text-white py-3.5 rounded-xl font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl transform hover:-translate-y-1 active:translate-y-0 relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
                 
@@ -166,14 +162,14 @@ const PsychiatristAuth = () => {
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                      Signing you in...
+                      Authenticating...
                     </>
                   ) : (
                     <>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
-                      Sign In & Start Healing
+                      Access Admin Panel
                     </>
                   )}
                 </span>
@@ -198,28 +194,28 @@ const PsychiatristAuth = () => {
 
             {/* Footer Info */}
             <div className="mt-8">
-              <div className="p-4 bg-gradient-to-r from-indigo-50/60 via-purple-50/60 to-pink-50/60 rounded-2xl border border-indigo-100/50 backdrop-blur-sm">
+              <div className="p-4 bg-gradient-to-r from-red-50/60 via-orange-50/60 to-yellow-50/60 rounded-2xl border border-red-100/50 backdrop-blur-sm">
                 <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
-                  <div className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium">Account provisioned by platform moderator</span>
+                  <div className="w-2 h-2 bg-gradient-to-r from-red-400 to-orange-500 rounded-full animate-pulse"></div>
+                  <span className="font-medium">Restricted administrative access</span>
                 </div>
                 <p className="text-center text-xs text-gray-500 mt-2">
-                  Secure access for mental health professionals 🔒
+                  Authorized personnel only 🔒
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Encouragement Card */}
+        {/* Bottom Security Notice */}
         <div className="mt-6 bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/40 shadow-lg">
           <div className="text-center">
             <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-              <span>Empowering Mental Wellness</span>
-              <span className="text-green-500">🌱</span>
+              <span>Administrative Control</span>
+              <span className="text-red-500">🛡️</span>
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed">
-              Together, we're creating a supportive space for Gen Z mental health 💜
+              Secure access to platform management and oversight
             </p>
           </div>
         </div>
@@ -228,4 +224,4 @@ const PsychiatristAuth = () => {
   );
 };
 
-export default PsychiatristAuth;
+export default AdminAuth;

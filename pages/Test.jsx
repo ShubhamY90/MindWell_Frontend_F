@@ -8,6 +8,7 @@ import { getAuth } from "firebase/auth";
 import { collection, doc, setDoc, updateDoc, Timestamp, getDoc, increment } from "firebase/firestore";
 import { db } from "../context/firebase/firebase";
 import ReactMarkdown from 'react-markdown';
+import { API_BASE_URL } from "../src/utils/api";
 
 const answerOptions = {
   anxiety: [
@@ -478,7 +479,7 @@ export default function MentalHealthQuestionnaire() {
       // Log what we're sending to the backend
       console.log("Sending complete assessment to analyzeMoodTest:", JSON.stringify(assessmentData, null, 2));
 
-      const response = await fetch("https://mindwell-backend-ngfl.onrender.com/api/analyzeMoodTest", {
+      const response = await fetch(`${API_BASE_URL}/api/analyzeMoodTest`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
