@@ -137,7 +137,7 @@ export default function Auth() {
 
 
   return (
-    <div className="w-screen min-h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-auto py-8">
+    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 overflow-auto py-8 pt-24 relative">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 w-screen h-screen overflow-hidden -z-10">
         {/* Floating Orbs */}
@@ -189,56 +189,39 @@ export default function Auth() {
         <div className="absolute top-1/2 left-1/5 w-4 h-12 bg-gradient-to-b from-blue-300/40 to-transparent rounded-full animate-sway" />
       </div>
 
-      <div className="w-full max-w-lg relative z-10 mx-4">
+      <div className="w-full max-w-md relative z-10 mx-4">
         {/* Main Login Card */}
         <div 
-          className="bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/60 shadow-2xl overflow-hidden transition-all duration-700 hover:shadow-indigo-200/50 animate-bounce-slow"
+          className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl overflow-hidden transition-all duration-700 hover:shadow-indigo-200/50"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           style={{
             transform: isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0px) scale(1)',
-            boxShadow: isHovered ? '0 32px 64px -12px rgba(99, 102, 241, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.1)',
-            animation: 'bounce-slow 6s ease-in-out infinite'
+            boxShadow: isHovered ? '0 32px 64px -12px rgba(99, 102, 241, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.1)'
           }}
         >
           {/* Glow Effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-100/30 via-transparent to-purple-100/30 animate-pulse-slow" />
           
           {/* Header */}
-          <div className="relative bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-6 text-center border-b border-indigo-100/50">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl blur-xl opacity-30 animate-pulse-slow" />
-                <div className="relative bg-gradient-to-r from-white to-indigo-50 p-4 rounded-2xl border border-indigo-200/80 shadow-lg">
-                  <Brain className="h-10 w-10 text-indigo-600 animate-pulse" />
-                </div>
-                
-                {/* Orbiting elements */}
-                <div className="absolute -inset-8 animate-spin-slow">
-                  <div className="absolute top-0 left-1/2 w-2 h-2 bg-indigo-400 rounded-full transform -translate-x-1/2 animate-pulse" />
-                  <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full transform -translate-x-1/2 animate-pulse" style={{ animationDelay: '1s' }} />
-                </div>
+          <div className="relative bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 p-8 text-white">
+            <div className="absolute inset-0 bg-black/5"></div>
+            <div className="relative z-10 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/15 rounded-2xl mb-4 backdrop-blur-sm border border-white/20">
+                <Brain className="w-8 h-8 text-white" />
               </div>
-            </div>
-            
-            <div className="relative">
-              <h1 className="text-2xl font-light text-gray-800 mb-2 tracking-wide">
-                {isForgotPassword ? 'Account Recovery' : isSignUp ? 'Create Account' : 'Welcome Back'}
+              <h1 className="text-2xl font-bold mb-2">
+                {isForgotPassword ? 'Account Recovery 🔐' : isSignUp ? 'Join MindWell 🌟' : 'Welcome Back! 💙'}
               </h1>
-              <p className="text-indigo-600/80 text-sm tracking-wider font-medium">
+              <p className="text-white/90 text-sm">
                 {isForgotPassword ? 'Restore access to your account' : 
-                 isSignUp ? 'Get started with your futuristic workspace' : 'Sign in to your futuristic workspace'}
+                 isSignUp ? 'Start your mental wellness journey today' : 'Ready to continue your wellness journey?'}
               </p>
-              
-              {/* Sparkle Effects */}
-              <Sparkles className="absolute -top-2 -right-8 h-4 w-4 text-indigo-400/60 animate-twinkle" />
-              <Sparkles className="absolute -bottom-2 -left-6 h-3 w-3 text-purple-400/60 animate-twinkle" style={{ animationDelay: '1s' }} />
-              <Sparkles className="absolute top-1/2 -right-4 h-2 w-2 text-pink-400/60 animate-twinkle" style={{ animationDelay: '2s' }} />
             </div>
           </div>
           
           {/* Form Area */}
-          <div className="p-6 relative">
+          <div className="p-8 relative">
             {error && (
               <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm backdrop-blur-sm animate-slade-in shadow-sm">
                 <div className="flex items-center gap-2">
@@ -516,7 +499,7 @@ export default function Auth() {
       </div>
       
       {/* Custom Styles */}
-      <style jsx global>{`
+      <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(180deg); }

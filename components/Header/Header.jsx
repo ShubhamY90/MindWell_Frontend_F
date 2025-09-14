@@ -157,8 +157,7 @@ export const Header = () => {
         </div>
       )}
 
-      {/* Add this to your global CSS for the slower spin animation */}
-      <style jsx global>{`
+      <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }

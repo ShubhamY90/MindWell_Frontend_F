@@ -1,5 +1,6 @@
 // useSessions.js
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../src/utils/api';
 
 const useSessions = (idToken) => {
   const [sessions, setSessions] = useState([]);
@@ -9,7 +10,7 @@ const useSessions = (idToken) => {
     if (!idToken) return;
     setIsLoading(true);
     try {
-      const res = await fetch('https://mindwell-backend-ngfl.onrender.com/api/sessions', {
+      const res = await fetch(`${API_BASE_URL}/api/sessions`, {
         headers: {
           Authorization: `Bearer ${idToken}`,
         },

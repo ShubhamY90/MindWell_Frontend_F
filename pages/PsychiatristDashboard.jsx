@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../src/hooks/useAuth';
+import { API_BASE_URL } from '../src/utils/api';
 
 const Card = ({ title, children, icon, count }) => (
   <div className="bg-white/80 backdrop-blur-xl border border-white/30 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
@@ -114,28 +116,26 @@ const RequestCard = ({ request, type, onAction }) => (
 
 const PsychiatristDashboard = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    try {
-      localStorage.removeItem('psy_token');
-      localStorage.removeItem('psy_name');
-    } catch {}
+    logout();
     navigate('/psychiatrist-auth');
   };
 
   const [pendingRequests, setPendingRequests] = useState([]);
   const [acceptedRequests, setAcceptedRequests] = useState([]);
   const [loading, setLoading] = useState(false);
-  const college = typeof window !== 'undefined' ? localStorage.getItem('psy_college') : null;
-  const psychiatristId = typeof window !== 'undefined' ? localStorage.getItem('psy_email') : null;
+  const college = user?.college || null;
+  const psychiatristId = user?.email || null;
 
   const fetchRequests = async () => {
     if (!college) return;
     setLoading(true);
     try {
       const [pendingRes, acceptedRes] = await Promise.all([
-        fetch(`https://mindwell-backend-ngfl.onrender.com/api/request/college/${encodeURIComponent(college)}?status=pending`),
-        fetch(`https://mindwell-backend-ngfl.onrender.com/api/request/college/${encodeURIComponent(college)}?status=accepted`),
+        fetch(`${API_BASE_URL}/api/request/college/${encodeURIComponent(college)}?status=pending`),
+        fetch(`${API_BASE_URL}/api/request/college/${encodeURIComponent(college)}?status=accepted`),
       ]);
 
       const [pendingData, acceptedData] = await Promise.all([pendingRes.json(), acceptedRes.json()]);
@@ -172,11 +172,14 @@ const PsychiatristDashboard = () => {
       // placeholder for chat navigation
       return;
     }
-    if (!psychiatristId) return;
+    if (!psychiatristId || !user?.token) return;
     try {
-      const res = await fetch(`https://mindwell-backend-ngfl.onrender.com/api/request/respond-atomic/${requestId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/request/respond-atomic/${requestId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
         body: JSON.stringify({ psychiatristId, action: action === 'decline' ? 'reject' : action }),
       });
       const data = await res.json();
@@ -244,7 +247,7 @@ const PsychiatristDashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                {`Welcome Back, ${localStorage.getItem('psy_name') || 'Doctor'} 👨‍⚕️`}
+                {`Welcome Back, ${user?.name || 'Doctor'} 👨‍⚕️`}
               </h1>
               <p className="text-gray-600 text-lg">
                 Review student connection requests and manage your assignments with care 💙

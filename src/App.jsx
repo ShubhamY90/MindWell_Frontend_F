@@ -4,12 +4,14 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
   Navigate,
 } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { Header } from "../components/Header/Header";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../context/firebase/firebase";
+import { useAuth } from "./hooks/useAuth";
 import "./App.css";
 
 // ✅ Lazy load all pages
@@ -26,22 +28,99 @@ const TermsOfService = lazy(() => import("../pages/TermsOfService"));
 const MentalWellnessResources = lazy(() => import("../pages/WellnessResources"));
 const PsychiatristAuth = lazy(() => import("../pages/PsychiatristAuth"));
 const PsychiatristDashboard = lazy(() => import("../pages/PsychiatristDashboard"));
+const AdminAuth = lazy(() => import("../pages/AdminAuth"));
 const AddRequest = lazy(() => import("../pages/AddRequest"));
 const ViewRequests = lazy(() => import("../pages/ViewRequests"));
+import AdminReportsPage from '../pages/AdminReportsPage';
 
-// ✅ Protected route wrapper
+// ✅ Protected route wrapper for psychiatrists
 const ProtectedPsychiatristRoute = ({ children }) => {
   const location = useLocation();
-  const token = localStorage.getItem("psy_token");
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
-  if (!token) {
-    return (
-      <Navigate
-        to="/psychiatrist-auth"
-        state={{ from: location }}
-        replace
-      />
-    );
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        console.log('🛡️ No user, redirecting to /psychiatrist-auth');
+        navigate('/psychiatrist-auth', { state: { from: location } });
+        return;
+      }
+      if (user.role !== 'psychiatrist') {
+        console.log('🛡️ User role is not psychiatrist:', user.role, 'redirecting to /auth');
+        navigate('/auth');
+        return;
+      }
+      console.log('🛡️ User is psychiatrist, allowing access');
+    }
+  }, [user, loading, navigate, location]);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (!user || user.role !== 'psychiatrist') {
+    return null;
+  }
+
+  return children;
+};
+
+// ✅ Protected route wrapper for students
+const ProtectedStudentRoute = ({ children }) => {
+  const location = useLocation();
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        navigate('/auth', { state: { from: location } });
+        return;
+      }
+      if (user.role !== 'student') {
+        navigate('/psychiatrist-auth');
+        return;
+      }
+    }
+  }, [user, loading, navigate, location]);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (!user || user.role !== 'student') {
+    return null;
+  }
+
+  return children;
+};
+
+// ✅ Protected route wrapper for admin users
+const ProtectedAdminRoute = ({ children }) => {
+  const location = useLocation();
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        navigate('/admin-auth', { state: { from: location } });
+        return;
+      }
+      if (user.role !== 'admin') {
+        navigate('/admin-auth', { state: { from: location } });
+        return;
+      }
+    }
+  }, [user, loading, navigate, location]);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (!user || user.role !== 'admin') {
+    return null;
   }
 
   return children;
@@ -64,7 +143,7 @@ function AppShell() {
     return () => unsubscribe();
   }, []);
 
-  const hideHeaderOnPaths = ["/psychiatrist-auth"];
+  const hideHeaderOnPaths = ["/psychiatrist-auth", "/admin-auth"];
 
   return (
     <>
@@ -83,14 +162,30 @@ function AppShell() {
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/psychiatrist-auth" element={<PsychiatristAuth />} />
-            <Route path="/psychiatrist" element={<PsychiatristDashboard />} />
-            <Route path="/add-request" element={<AddRequest />} />
+            <Route path="/admin-auth" element={<AdminAuth />} />
+            <Route path="/admin-reports" element={<AdminReportsPage />} />
+            <Route 
+              path="/psychiatrist" 
+              element={
+                <ProtectedPsychiatristRoute>
+                  <PsychiatristDashboard />
+                </ProtectedPsychiatristRoute>
+              } 
+            />
+            <Route 
+              path="/add-request" 
+              element={
+                <ProtectedStudentRoute>
+                  <AddRequest />
+                </ProtectedStudentRoute>
+              } 
+            />
             <Route
               path="/view-requests"
               element={
-                <ProtectedPsychiatristRoute>
+                <ProtectedAdminRoute>
                   <ViewRequests />
-                </ProtectedPsychiatristRoute>
+                </ProtectedAdminRoute>
               }
             />
               <Route

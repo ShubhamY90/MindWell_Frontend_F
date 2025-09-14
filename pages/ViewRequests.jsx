@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../src/hooks/useAuth';
+import { API_BASE_URL } from '../src/utils/api';
 
 const ViewRequests = () => {
   const [college, setCollege] = useState('');
@@ -7,30 +9,26 @@ const ViewRequests = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user, logout, loading: authLoading } = useAuth();
 
   const handleLogout = () => {
-    try {
-      localStorage.removeItem('psy_token');
-      localStorage.removeItem('psy_name');
-      localStorage.removeItem('psy_college');
-    } catch {}
-    navigate('/psychiatrist-auth');
+    logout();
+    navigate('/admin-auth');
   };
 
   const fetchList = async () => {
-    // Check if user is authenticated as psychiatrist
-    const token = localStorage.getItem('psy_token');
-    if (!token) {
-      navigate('/psychiatrist-auth');
+    // Check if user is authenticated as admin
+    if (!user || user.role !== 'admin') {
+      navigate('/admin-auth');
       return;
     }
     
     if (!college) return;
     setLoading(true);
     try {
-      const res = await fetch(`https://mindwell-backend-ngfl.onrender.com/api/request/college/${encodeURIComponent(college)}?status=${encodeURIComponent(status)}`, {
+      const res = await fetch(`${API_BASE_URL}/api/request/college/${encodeURIComponent(college)}?status=${encodeURIComponent(status)}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${user.token}`
         }
       });
       const data = await res.json();
@@ -40,8 +38,8 @@ const ViewRequests = () => {
       console.error(err);
       // If unauthorized, redirect to login
       if (err.message.includes('unauthorized') || err.message.includes('auth')) {
-        localStorage.removeItem('psy_token');
-        navigate('/psychiatrist-auth');
+        logout();
+        navigate('/admin-auth');
       }
       setItems([]);
     } finally {
@@ -50,28 +48,18 @@ const ViewRequests = () => {
   };
 
   useEffect(() => {
-    // Check if user is authenticated as psychiatrist
-    const token = localStorage.getItem('psy_token');
-    if (!token) {
-      navigate('/psychiatrist-auth');
+    // Only redirect if we're sure the user is not an admin and not loading
+    if (!authLoading && user && user.role !== 'admin') {
+      navigate('/admin-auth');
       return;
     }
     
-    const saved = localStorage.getItem('psy_college');
-    if (saved) setCollege(saved);
-  }, [navigate]);
-
-  useEffect(() => {
-    // Check if user is authenticated as psychiatrist
-    const token = localStorage.getItem('psy_token');
-    if (!token) {
-      navigate('/psychiatrist-auth');
-      return;
+    // If user is admin and we have a college, fetch the list
+    if (user && user.role === 'admin' && college) {
+      fetchList();
     }
-    
-    fetchList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [college, status]);
+  }, [user, authLoading, college, status]);
 
   const getStatusColor = (requestStatus) => {
     switch (requestStatus) {
@@ -134,6 +122,18 @@ const ViewRequests = () => {
     </div>
   );
 
+  // Show loading while authentication is being checked
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 relative overflow-hidden">
       {/* Background Elements */}
@@ -169,10 +169,10 @@ const ViewRequests = () => {
               </div>
               
               <button 
-                onClick={() => navigate('/psychiatrist')}
+                onClick={() => navigate('/')}
                 className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               >
-                Dashboard
+                Home
               </button>
               
               <button 
@@ -191,10 +191,10 @@ const ViewRequests = () => {
         {/* Header Section */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Request Management 📋
+            Admin Request Management 📋
           </h1>
           <p className="text-gray-600 text-lg">
-            View and manage student requests by college and status
+            View and manage all student requests by college and status
           </p>
         </div>
 
@@ -368,12 +368,12 @@ const ViewRequests = () => {
                             </div>
                           )}
 
-                          {r.status === 'accepted' && r.psychiatristName && (
+                          {r.status === 'accepted' && (
                             <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50/50 border border-emerald-200/30 rounded-lg px-3 py-2">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              Accepted by Dr. {r.psychiatristName}
+                              Request has been accepted
                             </div>
                           )}
                         </div>
