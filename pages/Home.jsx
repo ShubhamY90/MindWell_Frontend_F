@@ -98,47 +98,71 @@ export default function Home() {
     });
   }, []);
 
-  // Optimized audio loading
-  useEffect(() => {
-    if (audioRef.current) {
-      const audio = audioRef.current;
+  // Ultra-fast audio loading
+useEffect(() => {
+  const audio = new Audio();
+  
+  // Critical: Set properties BEFORE source for faster loading
+  audio.preload = 'auto';
+  audio.crossOrigin = 'anonymous';
+  audio.volume = 0.2;
+  audio.loop = true;
+  
+  const handleCanPlay = () => {
+    setAudioLoaded(true);
+    audio.muted = isMuted;
+  };
 
-      const handleCanPlay = () => {
-        setAudioLoaded(true);
-        audio.volume = 0.2;
-        audio.muted = isMuted;
-      };
-
-      const handleError = (e) => {
-        console.error("Audio loading error:", e);
-        setAudioLoaded(false);
-      };
-
-      audio.addEventListener('canplay', handleCanPlay);
-      audio.addEventListener('error', handleError);
-
-      // Preload the audio
+  const handleError = (e) => {
+    console.error("Audio loading error:", e);
+    // Try fallback source
+    if (!audio.src.includes('fallback')) {
+      audio.src = 'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav';
       audio.load();
-
-      return () => {
-        audio.removeEventListener('canplay', handleCanPlay);
-        audio.removeEventListener('error', handleError);
-      };
     }
-  }, [isMuted]);
+  };
 
-  const handleFirstInteraction = useCallback(() => {
-    if (!hasInteracted && audioRef.current && !isMuted && audioLoaded) {
-      const playPromise = audioRef.current.play();
+  audio.addEventListener('canplay', handleCanPlay);
+  audio.addEventListener('error', handleError);
+  
+  // Set source and load immediately
+  audio.src = '/calm.mp3';
+  audio.load(); // Start loading immediately
+  
+  audioRef.current = audio;
 
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("Playbook prevented:", error);
-        });
-      }
-      setHasInteracted(true);
+  return () => {
+    audio.removeEventListener('canplay', handleCanPlay);
+    audio.removeEventListener('error', handleError);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
     }
-  }, [hasInteracted, isMuted, audioLoaded]);
+  };
+}, [isMuted]);
+
+  // Instant interaction detection - no delays
+const handleFirstInteraction = useCallback(() => {
+  if (!hasInteracted && audioRef.current && !isMuted && audioLoaded) {
+    audioRef.current.play().catch(console.error);
+    setHasInteracted(true);
+  }
+}, [hasInteracted, isMuted, audioLoaded]);
+
+useEffect(() => {
+  if (audioLoaded && !hasInteracted) {
+    const handleInteraction = () => handleFirstInteraction();
+    
+    // Multiple event types for faster response
+    document.addEventListener('click', handleInteraction, { once: true, passive: true });
+    document.addEventListener('touchstart', handleInteraction, { once: true, passive: true });
+    
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  }
+}, [handleFirstInteraction, audioLoaded, hasInteracted]);
 
   useEffect(() => {
     const handleInteraction = () => {
@@ -156,23 +180,20 @@ export default function Home() {
     };
   }, [handleFirstInteraction, audioLoaded]);
 
-  // Handle mute toggle
-  const toggleMute = useCallback(() => {
-    if (audioRef.current) {
-      const newMuted = !audioRef.current.muted;
-      audioRef.current.muted = newMuted;
-      setIsMuted(newMuted);
+  
+ // Instant mute toggle
+const toggleMute = useCallback(() => {
+  if (!audioRef.current) return;
+  
+  const newMuted = !isMuted;
+  audioRef.current.muted = newMuted;
+  setIsMuted(newMuted);
 
-      if (!newMuted && audioLoaded) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((error) => {
-            console.error("Playbook failed:", error);
-          });
-        }
-      }
-    }
-  }, [audioLoaded]);
+  // Immediate play if unmuting
+  if (!newMuted && audioLoaded) {
+    audioRef.current.play().catch(console.error);
+  }
+}, [isMuted, audioLoaded]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -227,7 +248,7 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover object-center"
             loading="eager"
           />
-          
+
           {/* Hero Content */}
           <div className="relative z-10 h-full flex flex-col justify-center items-center px-4 sm:px-6 md:px-8 text-center">
             <div>
@@ -236,7 +257,7 @@ export default function Home() {
               </h1>
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white sm:mb-6 leading-tight max-w-4xl" data-aos="fade-up">
                 Journey Starts Here
-              </h1>            
+              </h1>
             </div>
 
             <div className="max-w-2xl lg:max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10" data-aos="fade-up" data-aos-delay="100">
@@ -480,7 +501,7 @@ export default function Home() {
               <MessageCircle className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 mr-2 text-purple-600" />
               Begin Your Journey
             </button>
-            
+
             <button
               onClick={handleConnectWithPsychiatrist}
               className="bg-transparent border-2 border-white text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-full text-sm sm:text-base lg:text-lg font-semibold hover:bg-white/10 transition-all duration-300 flex items-center"
@@ -546,10 +567,10 @@ export default function Home() {
 
       {/* Audio Control Button - Responsive */}
       <button
-        onClick={toggleMute}
-        className="fixed bottom-4 right-4 z-50 bg-white border border-gray-300 rounded-full shadow-md p-2 sm:p-3 hover:shadow-lg transition-all"
+        onClick={audioLoaded ? toggleMute : undefined}
+        className={`fixed bottom-4 right-4 z-50 bg-white border border-gray-300 rounded-full shadow-md p-2 sm:p-3 hover:shadow-lg transition-all ${!audioLoaded ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         title={isMuted ? "Unmute sound" : "Mute sound"}
-        disabled={!audioLoaded}
       >
         {isMuted ? (
           <VolumeX className="h-4 sm:h-5 w-4 sm:w-5 text-purple-600" />

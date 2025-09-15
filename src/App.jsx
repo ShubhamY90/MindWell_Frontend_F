@@ -15,7 +15,7 @@ import { useAuth } from "./hooks/useAuth";
 import "./App.css";
 
 // ✅ Lazy load all pages
-const Home = lazy(() => import("../pages/Home"));
+import Home from "../pages/Home";
 const Test = lazy(() => import("../pages/Test"));
 const Auth = lazy(() => import("../pages/Auth"));
 const Community = lazy(() => import("../pages/Community"));
