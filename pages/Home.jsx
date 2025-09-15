@@ -98,71 +98,47 @@ export default function Home() {
     });
   }, []);
 
-  // Ultra-fast audio loading
-useEffect(() => {
-  const audio = new Audio();
-  
-  // Critical: Set properties BEFORE source for faster loading
-  audio.preload = 'auto';
-  audio.crossOrigin = 'anonymous';
-  audio.volume = 0.2;
-  audio.loop = true;
-  
-  const handleCanPlay = () => {
-    setAudioLoaded(true);
-    audio.muted = isMuted;
-  };
-
-  const handleError = (e) => {
-    console.error("Audio loading error:", e);
-    // Try fallback source
-    if (!audio.src.includes('fallback')) {
-      audio.src = 'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav';
-      audio.load();
-    }
-  };
-
-  audio.addEventListener('canplay', handleCanPlay);
-  audio.addEventListener('error', handleError);
-  
-  // Set source and load immediately
-  audio.src = '/calm.mp3';
-  audio.load(); // Start loading immediately
-  
-  audioRef.current = audio;
-
-  return () => {
-    audio.removeEventListener('canplay', handleCanPlay);
-    audio.removeEventListener('error', handleError);
+  // Optimized audio loading
+  useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+      const audio = audioRef.current;
+
+      const handleCanPlay = () => {
+        setAudioLoaded(true);
+        audio.volume = 0.2;
+        audio.muted = isMuted;
+      };
+
+      const handleError = (e) => {
+        console.error("Audio loading error:", e);
+        setAudioLoaded(false);
+      };
+
+      audio.addEventListener('canplay', handleCanPlay);
+      audio.addEventListener('error', handleError);
+
+      // Preload the audio
+      audio.load();
+
+      return () => {
+        audio.removeEventListener('canplay', handleCanPlay);
+        audio.removeEventListener('error', handleError);
+      };
     }
-  };
-}, [isMuted]);
+  }, [isMuted]);
 
-  // Instant interaction detection - no delays
-const handleFirstInteraction = useCallback(() => {
-  if (!hasInteracted && audioRef.current && !isMuted && audioLoaded) {
-    audioRef.current.play().catch(console.error);
-    setHasInteracted(true);
-  }
-}, [hasInteracted, isMuted, audioLoaded]);
+  const handleFirstInteraction = useCallback(() => {
+    if (!hasInteracted && audioRef.current && !isMuted && audioLoaded) {
+      const playPromise = audioRef.current.play();
 
-useEffect(() => {
-  if (audioLoaded && !hasInteracted) {
-    const handleInteraction = () => handleFirstInteraction();
-    
-    // Multiple event types for faster response
-    document.addEventListener('click', handleInteraction, { once: true, passive: true });
-    document.addEventListener('touchstart', handleInteraction, { once: true, passive: true });
-    
-    return () => {
-      document.removeEventListener('click', handleInteraction);
-      document.removeEventListener('touchstart', handleInteraction);
-    };
-  }
-}, [handleFirstInteraction, audioLoaded, hasInteracted]);
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Playbook prevented:", error);
+        });
+      }
+      setHasInteracted(true);
+    }
+  }, [hasInteracted, isMuted, audioLoaded]);
 
   useEffect(() => {
     const handleInteraction = () => {
@@ -180,20 +156,23 @@ useEffect(() => {
     };
   }, [handleFirstInteraction, audioLoaded]);
 
-  
- // Instant mute toggle
-const toggleMute = useCallback(() => {
-  if (!audioRef.current) return;
-  
-  const newMuted = !isMuted;
-  audioRef.current.muted = newMuted;
-  setIsMuted(newMuted);
+  // Handle mute toggle
+  const toggleMute = useCallback(() => {
+    if (audioRef.current) {
+      const newMuted = !audioRef.current.muted;
+      audioRef.current.muted = newMuted;
+      setIsMuted(newMuted);
 
-  // Immediate play if unmuting
-  if (!newMuted && audioLoaded) {
-    audioRef.current.play().catch(console.error);
-  }
-}, [isMuted, audioLoaded]);
+      if (!newMuted && audioLoaded) {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            console.error("Playbook failed:", error);
+          });
+        }
+      }
+    }
+  }, [audioLoaded]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -568,17 +547,19 @@ const toggleMute = useCallback(() => {
       {/* Audio Control Button - Responsive */}
       <button
         onClick={audioLoaded ? toggleMute : undefined}
-        className={`fixed bottom-4 right-4 z-50 bg-white border border-gray-300 rounded-full shadow-md p-2 sm:p-3 hover:shadow-lg transition-all ${!audioLoaded ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+        className="fixed bottom-4 right-4 z-50 bg-white border border-gray-300 rounded-full shadow-md p-2 sm:p-3 hover:shadow-lg transition-all"
         title={isMuted ? "Unmute sound" : "Mute sound"}
       >
-        {isMuted ? (
+        {!audioLoaded ? (
+          // Loading animation instead of icon
+          <div className="h-4 sm:h-5 w-4 sm:w-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        ) : isMuted ? (
           <VolumeX className="h-4 sm:h-5 w-4 sm:w-5 text-purple-600" />
         ) : (
           <Volume2 className="h-4 sm:h-5 w-4 sm:w-5 text-purple-600" />
         )}
       </button>
-
+      
       {/* Audio Loading Indicator */}
       {!audioLoaded && (
         <div className="fixed bottom-16 right-4 z-40 bg-white border border-gray-300 rounded-lg shadow-md p-2 text-xs text-gray-600">
