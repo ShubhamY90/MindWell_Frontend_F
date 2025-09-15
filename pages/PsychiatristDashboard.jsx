@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../src/hooks/useAuth';
 import { API_BASE_URL } from '../src/utils/api';
+import ChatRoom from './ChatRoom'; // Import the ChatRoom component
 
 const Card = ({ title, children, icon, count }) => (
   <div className="bg-white/80 backdrop-blur-xl border border-white/30 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
@@ -100,7 +101,7 @@ const RequestCard = ({ request, type, onAction }) => (
         )}
         {type === 'accepted' && (
           <button
-            onClick={() => onAction(request.id, 'message')}
+            onClick={() => onAction(request.id, 'message', request.email)}
             className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-medium rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,11 +127,13 @@ const PsychiatristDashboard = () => {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [acceptedRequests, setAcceptedRequests] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [currentChatStudent, setCurrentChatStudent] = useState(null);
   const college = user?.college || null;
   const psychiatristId = user?.email || null;
 
-  const fetchRequests = async () => {
-    if (!college) return;
+   const fetchRequests = async () => {
+    if (!college || !psychiatristId) return;
     setLoading(true);
     try {
       const [pendingRes, acceptedRes] = await Promise.all([
@@ -149,10 +152,19 @@ const PsychiatristDashboard = () => {
         reason: r.message || '',
         urgency: r.status === 'pending' ? 'Awaiting response' : 'Accepted',
         requestDate: new Date(r.createdAt).toLocaleString(),
+        // Keep the original request data for filtering
+        originalRequest: r
       });
 
+      // Filter pending requests (show all pending)
       setPendingRequests((pendingData.requests || []).map(mapToCard));
-      setAcceptedRequests((acceptedData.requests || []).map(mapToCard));
+      
+      // Filter accepted requests to only show those accepted by this psychiatrist
+      const filteredAccepted = (acceptedData.requests || []).filter(
+        request => request.psychiatristId === psychiatristId
+      );
+      
+      setAcceptedRequests(filteredAccepted.map(mapToCard));
     } catch (err) {
       console.error('Fetch requests error:', err);
       setPendingRequests([]);
@@ -167,11 +179,14 @@ const PsychiatristDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [college]);
 
-  const handleAction = async (requestId, action) => {
+  const handleAction = async (requestId, action, studentEmail = null) => {
     if (action === 'message') {
-      // placeholder for chat navigation
+      // Open chat dialog with the student
+      setCurrentChatStudent(studentEmail);
+      setShowChat(true);
       return;
     }
+    
     if (!psychiatristId || !user?.token) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/request/respond-atomic/${requestId}`, {
@@ -195,6 +210,11 @@ const PsychiatristDashboard = () => {
 
   const handleRefresh = () => {
     fetchRequests();
+  };
+
+  const closeChat = () => {
+    setShowChat(false);
+    setCurrentChatStudent(null);
   };
 
   return (
@@ -370,6 +390,36 @@ const PsychiatristDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Chat Modal */}
+      {showChat && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl h-96 shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Chat with {currentChatStudent}
+              </h3>
+              <button
+                onClick={closeChat}
+                className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1">
+              <ChatRoom 
+                userId={user.email} 
+                otherUserId={currentChatStudent} 
+                userRole={user.role}
+                isModal={true}
+                onClose={closeChat}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
