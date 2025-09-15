@@ -58,25 +58,63 @@ export const useAuth = () => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          // Get user data from Firestore
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.email));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            const idToken = await firebaseUser.getIdToken();
-            
+          const idToken = await firebaseUser.getIdToken();
+
+          // Try users by UID first (preferred)
+          let userSnapshot = await getDoc(doc(db, 'users', firebaseUser.uid));
+
+          // If not found, try users by email (legacy schema)
+          if (!userSnapshot.exists()) {
+            userSnapshot = await getDoc(doc(db, 'users', firebaseUser.email));
+          }
+
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
             setUser({
-              role: userData.role,
-              name: userData.name,
-              email: userData.email,
+              role: userData.role || 'student',
+              name: userData.name || firebaseUser.displayName || firebaseUser.email,
+              email: userData.email || firebaseUser.email,
               token: idToken,
               college: userData.college || null
             });
           } else {
-            setUser(null);
+            // Try students collection by UID
+            const studentSnapshot = await getDoc(doc(db, 'students', firebaseUser.uid));
+            if (studentSnapshot.exists()) {
+              const studentData = studentSnapshot.data();
+              setUser({
+                role: 'student',
+                name: studentData.name || firebaseUser.displayName || firebaseUser.email,
+                email: firebaseUser.email,
+                token: idToken,
+                college: studentData.college || null
+              });
+            } else {
+              // Default to student if authenticated via Firebase but no profile doc yet
+              setUser({
+                role: 'student',
+                name: firebaseUser.displayName || firebaseUser.email,
+                email: firebaseUser.email,
+                token: idToken,
+                college: null
+              });
+            }
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
-          setUser(null);
+          // Fall back to minimal student session to avoid blocking
+          try {
+            const idToken = await firebaseUser.getIdToken();
+            setUser({
+              role: 'student',
+              name: firebaseUser.displayName || firebaseUser.email,
+              email: firebaseUser.email,
+              token: idToken,
+              college: null
+            });
+          } catch (_) {
+            setUser(null);
+          }
         }
       } else {
         setUser(null);

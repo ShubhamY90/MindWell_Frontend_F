@@ -28,6 +28,7 @@ const TermsOfService = lazy(() => import("../pages/TermsOfService"));
 const MentalWellnessResources = lazy(() => import("../pages/WellnessResources"));
 const PsychiatristAuth = lazy(() => import("../pages/PsychiatristAuth"));
 const PsychiatristDashboard = lazy(() => import("../pages/PsychiatristDashboard"));
+const MyChats = lazy(() => import("../pages/MyChats"));
 const AdminAuth = lazy(() => import("../pages/AdminAuth"));
 const AddRequest = lazy(() => import("../pages/AddRequest"));
 const ViewRequests = lazy(() => import("../pages/ViewRequests"));
@@ -143,7 +144,8 @@ function AppShell() {
     return () => unsubscribe();
   }, []);
 
-  const hideHeaderOnPaths = ["/psychiatrist-auth", "/admin-auth"];
+  // Add "/psychiatrist" to the array to hide header on psychiatrist dashboard
+  const hideHeaderOnPaths = ["/psychiatrist-auth", "/admin-auth", "/psychiatrist"];
 
   return (
     <>
@@ -177,6 +179,14 @@ function AppShell() {
               element={
                 <ProtectedStudentRoute>
                   <AddRequest />
+                </ProtectedStudentRoute>
+              } 
+            />
+            <Route 
+              path="/my-chats" 
+              element={
+                <ProtectedStudentRoute>
+                  <MyChats userId={currentUser?.email} />
                 </ProtectedStudentRoute>
               } 
             />
