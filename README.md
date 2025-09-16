@@ -16,44 +16,40 @@ MindWell is a digital companion for mental health, offering:
 
 ---
 
-## 🗂️ Project Structure & Key Components
+## 🗂️ Project Structure
 
-### 1. **src/**
+- **src/**: Core application logic, routing, hooks, and utilities.
+- **components/**: Reusable UI components for chatbot, community, and general interface.
+- **pages/**: Individual page components for different app sections.
+- **context/firebase/**: Firebase configuration and authentication.
+- **public/**: Static assets and configuration files.
 
-- **App.jsx:** Main React app entry point. Sets up routing, authentication guards for students, psychiatrists, and admins, and lazy loads pages for performance.
-- **main.jsx:** React DOM root rendering the App component.
-- **hooks/**: Custom React hooks for authentication (`useAuth`), chat management (`useChat`), and session handling (`useSessions`).
-- **utils/**: Utility functions including API interaction, encryption, and message sending.
-- **App.css & index.css:** Global styling files.
+---
 
-### 2. **components/**
+## 📄 Pages & Their Functions
 
-- **Chatbot/**: Core chatbot UI components including `ChatWindow.jsx` (main chat interface), `ChatInput.jsx`, `MessageBubble.jsx`, `SessionList.jsx`, and loading indicators.
-- **Header/**: Application header with navigation.
-- **ui/**: Reusable UI components like buttons, cards, progress bars, radio groups, and modals.
-- **Sidebar.jsx, SearchPanel.jsx, CreatePostModal.jsx, Post.jsx:** Various UI components supporting community and content creation features.
-- **Particles.jsx:** Visual particle effects for UI enhancement.
+### Core User Pages
+- **Home (`/`)**: Entry point with mood assessment, quick access to AI chat, community, and professional help. Solves initial user engagement and navigation. Use it to start your mental wellness journey.
+- **Test (`/test`)**: Interactive mood questionnaire with AI interpretation. Solves self-assessment needs. Use it to gain insights into your current emotional state.
+- **Chatbot (`/chatbot`)**: 24/7 AI conversational support with encrypted sessions. Solves immediate emotional support needs. Use it for confidential, judgment-free conversations.
+- **Community (`/community`)**: Moderated social space for anonymous/open sharing. Solves isolation and connection needs. Use it to find support and share experiences safely.
+- **Resources (`/resources`, `/wellnessresources`)**: Personalized mental health tools and articles. Solves education and coping strategy needs. Use it for evidence-based self-help resources.
 
-### 3. **pages/**
+### Authentication & Role-Based Pages
+- **Auth (`/auth`)**: Student user login/registration. Solves secure access for students.
+- **PsychiatristAuth (`/psychiatrist-auth`)**: Professional healthcare provider login. Solves secure access for mental health professionals.
+- **AdminAuth (`/admin-auth`)**: Administrative access for platform management. Solves oversight and moderation needs.
 
-- **Home.jsx:** Landing page with mood test prompt, AI chat access, community links, and psychiatrist connection.
-- **Auth.jsx, PsychiatristAuth.jsx, AdminAuth.jsx:** Authentication pages for different user roles.
-- **PsychiatristDashboard.jsx, PsychiatristRegister.jsx:** Psychiatrist-specific pages.
-- **MoodTracker.jsx:** Mood tracking and therapy tools.
-- **Community.jsx:** Hive network community page.
-- **Resources.jsx, WellnessResources.jsx:** Mental health resources and tools.
-- **AddRequest.jsx, ViewRequests.jsx, AdminReportsPage.jsx:** Request management and admin reporting.
-- **TermsOfService.jsx, PrivacyPolicy.jsx, CookiePolicy.jsx:** Legal and policy pages.
-- **Test.jsx:** Mood test page.
-- **MyChats.jsx:** User chat history.
+### Professional & Administrative Pages
+- **PsychiatristDashboard (`/psychiatrist`)**: Protected dashboard for managing consultations. Solves professional-patient interaction needs.
+- **PsychiatristRegister (`/psychiatrist-register`)**: Registration for mental health professionals. Solves credential verification.
+- **AddRequest (`/add-request`)**: Students request professional consultations. Solves access to professional help.
+- **MyChats (`/my-chats`)**: User chat history and session management. Solves continuity of AI conversations.
+- **ViewRequests (`/view-requests`)**: Admin review of consultation requests. Solves request triage and assignment.
+- **AdminReportsPage (`/admin-reports`)**: Platform moderation and reporting tools. Solves community safety and compliance.
 
-### 4. **context/firebase/**
-
-- Firebase initialization and authentication helpers (`firebase.jsx`).
-
-### 5. **public/**
-
-- Static assets including images (`calm.mp3`, `chatbotbg.png`, `favicon.png`, etc.) and redirect rules.
+### Legal & Policy Pages
+- **TermsOfService, PrivacyPolicy, CookiePolicy**: Legal compliance and user rights information. Solves transparency and legal requirements.
 
 ---
 
@@ -115,6 +111,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to explore t
 - Use `utils/` for helper functions and API calls.
 
 ---
+
+## 🔒 Security & Moderation
+
+- **Data Encryption:** Chat sessions and sensitive user data are encrypted using AES-GCM (Advanced Encryption Standard with Galois/Counter Mode) with PBKDF2 key derivation for maximum security and privacy.
+- **Community Moderation:** Dual-layer moderation system - automatic AI screening for toxic content before posting, plus user reporting system for spam, hate speech, harassment, and false information.
+- **Role-Based Access:** Protected routes ensure users only access appropriate features based on their roles (student, psychiatrist, admin).
+- **Firebase Security:** Authentication and database operations follow Firebase security best practices with secure token management.
 
 ## 📜 Additional Notes
 
