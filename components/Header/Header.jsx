@@ -95,6 +95,7 @@ export const Header = () => {
                   <NavItem icon={Stars} label="My Chats" to="/my-chats" />
                   <NavItem icon={Stars} label="Mood Tracker" to="/therapies" />
                   <NavItem icon={Stars} label="Hive Network" to="/community" />
+                  <NavItem icon={Stars} label="Wellness Hub" to="/resources" />
                   {/* <NavItem icon={Stars} label="Students" to="/psychiatrist" /> */}
                 </div>
               </nav>

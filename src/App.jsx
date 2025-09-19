@@ -158,8 +158,8 @@ function AppShell() {
             <Route path="/therapies" element={<MoodDashboard user={currentUser} />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/community" element={<Community />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/resourcess" element={<MentalWellnessResources />} />
+            <Route path="/resourcess" element={<Resources />} />
+            <Route path="/resources" element={<MentalWellnessResources />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
