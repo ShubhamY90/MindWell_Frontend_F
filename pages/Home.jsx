@@ -495,54 +495,59 @@ export default function Home() {
       </main>
 
       {/* Footer - Enhanced Responsive */}
-      <footer className="bg-gray-50 border-t border-gray-200 mt-8 sm:mt-12 lg:mt-20">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-            <div className="col-span-2 sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-                <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-1 sm:p-2 rounded-lg">
-                  <Brain className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 text-white" />
-                </div>
-                <span className="text-sm sm:text-base lg:text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  MindWell
-                </span>
-              </div>
-              <p className="text-gray-600 text-xs sm:text-sm lg:text-base">
-                Supporting your mental wellness journey with compassionate, evidence-based tools and community.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2 sm:mb-4 text-xs sm:text-sm lg:text-base">Support</h4>
-              <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
-                <li><Link to="/resources" className="hover:text-purple-600">Crisis Resources</Link></li>
-                <li><a href="mailto:aryabrata.swain.ug23@nsut.ac.in" className="hover:text-purple-600">Contact Us</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2 sm:mb-4 text-xs sm:text-sm lg:text-base">Community</h4>
-              <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
-                <li><Link to="/community" className="hover:text-purple-600">Hive Network</Link></li>
-                <li><Link to="/chatbot" className="hover:text-purple-600">24/7 Chat</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-4">Professional Help</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link to="/add-request" className="hover:text-purple-600">Connect with Psychiatrist</Link></li>
-                <li><Link to="/privacy-policy" className="hover:text-purple-600">Privacy Policy</Link></li>
-                <li><Link to="/terms-of-service" className="hover:text-purple-600">Terms of Service</Link></li>
-              </ul>
-            </div>
+<footer className="bg-gray-50 border-t border-gray-200 mt-8 sm:mt-12 lg:mt-20">
+  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+      <div className="col-span-2 sm:col-span-2 lg:col-span-1">
+        <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-1 sm:p-2 rounded-lg">
+            <Brain className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 text-white" />
           </div>
-
-          <div className="border-t border-gray-200 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-gray-600">
-            <p>&copy; 2025 MindWell. All rights reserved. Not a substitute for professional medical advice.</p>
-          </div>
+          <span className="text-sm sm:text-base lg:text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            MindWell
+          </span>
         </div>
-      </footer>
+        <p className="text-gray-600 text-xs sm:text-sm lg:text-base">
+          Supporting your mental wellness journey with compassionate, evidence-based tools and community.
+        </p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-gray-800 mb-2 sm:mb-4 text-xs sm:text-sm lg:text-base">Support</h4>
+        <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
+          <li><Link to="/resources" className="hover:text-purple-600">Wellness Hub</Link></li>
+          <li><a href="mailto:mindwell319@gmail.com" className="hover:text-purple-600">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-gray-800 mb-2 sm:mb-4 text-xs sm:text-sm lg:text-base">Community</h4>
+        <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
+          <li><Link to="/community" className="hover:text-purple-600">Hive Network</Link></li>
+          <li><Link to="/chatbot" className="hover:text-purple-600">24/7 Chat</Link></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-gray-800 mb-2 sm:mb-4 text-xs sm:text-sm lg:text-base">Professional Help</h4>
+        <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
+          <li><Link to="/add-request" className="hover:text-purple-600">Connect with Psychiatrist</Link></li>
+          <li><Link to="/privacy-policy" className="hover:text-purple-600">Privacy Policy</Link></li>
+          <li><Link to="/terms-of-service" className="hover:text-purple-600">Terms of Service</Link></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-gray-800 mb-2 sm:mb-4 text-xs sm:text-sm lg:text-base">Not a Student?</h4>
+        <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
+          <li><Link to="/psychiatrist-auth" className="hover:text-purple-600">Psychiatrist Login</Link></li>
+          <li><Link to="/admin-auth" className="hover:text-purple-600">Admin Login</Link></li>
+          <li><Link to="/view-requests" className="hover:text-purple-600">View All Requests</Link></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
 
       {/* Audio Control Button - Responsive */}
       <button

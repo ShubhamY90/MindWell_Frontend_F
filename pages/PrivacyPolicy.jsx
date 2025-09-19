@@ -40,7 +40,7 @@ const PrivacyPolicy = () => {
         <li><strong>Deletion:</strong> Request deletion of your account and data</li>
         <li><strong>Opt-out:</strong> Disable non-essential tracking</li>
       </ul>
-      <p className="mb-6">To exercise your rights, email us at <a href="mailto:aryabrata.swain.ug23@nsut.ac.in" className="text-purple-600 underline">aryabrata.swain.ug23@nsut.ac.in</a>.</p>
+      <p className="mb-6">To exercise your rights, email us at <a href="mailto:mindwell319@gmail.com" className="text-purple-600 underline">mindwell319@gmail.com</a></p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">4. Data Protection and Security</h2>
       <ul className="list-disc list-inside mb-6">
@@ -94,7 +94,7 @@ const PrivacyPolicy = () => {
       <h2 className="text-2xl font-semibold mt-10 mb-4">13. Contact Us</h2>
       <p className="mb-2 font-medium">Privacy Officer</p>
       <p className="mb-1">MindWell</p>
-      <p>Email: <a href="mailto:aryabrata.swain.ug23@nsut.ac.in" className="text-purple-600 underline">aryabrata.swain.ug23@nsut.ac.in</a></p>
+      <p>Email: <a href="mailto:mindwell319@gmail.com" className="text-purple-600 underline">mindwell319@gmail.com</a></p>
     </div>
   );
 };
