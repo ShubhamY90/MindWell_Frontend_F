@@ -149,7 +149,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to explore t
 - Chat sessions are encrypted and stored securely.
 - The AI chatbot uses Gemini API for empathetic responses.
 - Tailwind CSS ensures responsive and accessible UI.
-- The app supports dark mode toggling (partially implemented).
 
 ---
 
