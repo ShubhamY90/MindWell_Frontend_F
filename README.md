@@ -104,15 +104,11 @@ MindWell is a digital companion for mental health, offering:
 
 ---
 
-## 🖼️ Visual Overview
-
----
-
 ## 📦 Installation & Running Locally
 
 ```bash
 # Clone the repo
-git clone <repo-url>
+git clone https://github.com/Abhishek-kroy/Mindwell_Frontend
 cd MindWell
 
 # Install dependencies
@@ -156,6 +152,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to explore t
 ## 🧑‍💻 Contributors
 
 - Developed with care by a dedicated team passionate about mental health and technology.
+
+- [@Abhishek Kumar Roy](https://github.com/Abhishek-kroy)
+- [@shubham Yadav](https://github.com/ShubhamY90)
+- [@Surveer](https://github.com/surveerssg)
+- [@Aryan Mahajan](https://github.com/AryanM65)
+- [@Shubhangi](https://github.com/SHUBHANGIjohri)
+
 
 ---
 
