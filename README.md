@@ -1,6 +1,7 @@
 # 🧠 MindWell – Because Your Mind Deserves Kindness
 
 Welcome to **MindWell**, a comprehensive mental wellness platform designed to provide compassionate, evidence-based support through modern technology. This README guides you through the project structure, features, and technical details to help you understand the full scope of the application without needing to open individual files.
+<img width="1426" height="777" alt="Screenshot 2025-09-19 at 11 38 31 PM" src="https://github.com/user-attachments/assets/e3656a36-cd6e-49c6-a96a-25603c53590f" />
 
 ---
 
