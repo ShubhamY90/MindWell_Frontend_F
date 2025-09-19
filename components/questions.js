@@ -84,6 +84,10 @@ const anxietyQuestions = [
     { id: 8, text: "Moving or speaking so slowly that other people could have noticed? Or the opposite—being so fidgety or restless that you have been moving around a lot more than usual?" },
     { id: 9, text: "Thoughts that you would be better off dead, or of hurting yourself in some way?" }
   ];
+
+  const happyQuestions = [
+    { id: 1, text: "Little interest or pleasure in doing things?" },
+  ];
   
   export default function getQuestionsByMood(mood) {
     switch (mood) {
@@ -97,6 +101,8 @@ const anxietyQuestions = [
         return lowQuestions;
       case "sad":
         return sadQuestions;
+      case "happy":
+        return happyQuestions;
       default:
         return [];
     }

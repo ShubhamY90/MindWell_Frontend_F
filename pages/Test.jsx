@@ -368,7 +368,7 @@ export default function MentalHealthQuestionnaire() {
       setShowWelcome(false);
 
       if (moodValue === 'happy') {
-        setQuestions(getQuestionsByMood('sad'));
+        setQuestions(getQuestionsByMood('happy'));
         setAnswers([]);
         setCurrentQuestionIndex(0);
       } else {
