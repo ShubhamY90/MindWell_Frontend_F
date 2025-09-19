@@ -68,7 +68,7 @@ MindWell is a digital companion for mental health, offering:
 
 - **PsychiatristRegister (`/psychiatrist-register`)**: Registration for mental health professionals. Solves credential verification.
 - **AddRequest (`/add-request`)**: Students request professional consultations. Solves access to professional help.
-- <img width="1426" height="777" alt="Screenshot 2025-09-19 at 11 47 18 PM" src="https://github.com/user-attachments/assets/95f25b16-de00-481e-ac5c-e7eaaff93ac9" />
+- <img width="700" height="383" alt="Screenshot 2025-09-19 at 11 47 18 PM" src="https://github.com/user-attachments/assets/95f25b16-de00-481e-ac5c-e7eaaff93ac9" />
 
 - **MyChats (`/my-chats`)**: User chat history and session management. Solves continuity of AI conversations.
 - <img width="700" height="383" alt="image" src="https://github.com/user-attachments/assets/967c3150-3b9b-4e6d-adbc-40c0dde982d0" />
