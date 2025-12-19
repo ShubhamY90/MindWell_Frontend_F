@@ -5,7 +5,7 @@ const getApiBaseUrl = () => {
       return 'http://localhost:4000';
     }
     // For production/deployed frontend, use the deployed backend
-    return 'https://mindwell-backend-ngfl.onrender.com';
+    return 'https://mindwell-backend-f.onrender.com';
   };
   
   export const API_BASE_URL = getApiBaseUrl();
