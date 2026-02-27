@@ -197,6 +197,10 @@ function MyChats() {
 
       if (action === 'accept') {
         setViewMode('chats');
+        setRequests(prev => prev.filter(req => req.id !== requestId));
+      } else if (action === 'reject') {
+        // Optimistically remove the rejected request from the UI
+        setRequests(prev => prev.filter(req => req.id !== requestId));
       }
     } catch (err) {
       alert(err.message);
