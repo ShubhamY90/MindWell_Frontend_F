@@ -126,16 +126,17 @@ function MyChats() {
           const docSnap = await getDoc(doc(db, "users", id));
           if (docSnap.exists()) {
             newDetails[id] = {
-              name: docSnap.data().name || "Unknown User",
+              name: docSnap.data().name || docSnap.data().firstName || "Unknown User",
+              email: docSnap.data().email || "",
               role: docSnap.data().role || "student",
               loading: false
             };
           } else {
-            newDetails[id] = { name: "MindWell User", role: "unknown", loading: false };
+            newDetails[id] = { name: "MindWell User", email: "", role: "unknown", loading: false };
           }
         } catch (err) {
           console.warn("Failed to fetch user info:", id);
-          newDetails[id] = { name: "User", role: "unknown", loading: false };
+          newDetails[id] = { name: "User", email: "", role: "unknown", loading: false };
         }
       }));
 
@@ -386,23 +387,28 @@ function MyChats() {
                       </div>
                       {!sidebarCollapsed && (
                         <div className="flex-1 text-left min-w-0">
-                          <div className="flex items-center justify-between mb-0.5">
-                            <div className="flex items-center gap-1.5 min-w-0">
+                          <div className="flex items-start justify-between mb-0.5">
+                            <div className="flex flex-col min-w-0 flex-1 pr-2">
                               <p className={`font-bold truncate text-[13px] ${isActive ? 'text-[#2D3142]' : 'text-[#4A4E69]'}`}>
                                 {(() => {
                                   const p = participants[otherUser];
-                                  if (!p || p.loading) return "Securing...";
+                                  if (!p || p.loading) return "Loading...";
                                   const isDoc = ['psychiatrist', 'doctor', 'company_doctor'].includes(p.role);
                                   return isDoc ? `Doc. ${p.name}` : p.name;
                                 })()}
                               </p>
+                              {participants[otherUser]?.email && (
+                                <p className={`truncate text-[10px] ${isActive ? 'text-[#2D3142]/70' : 'text-[#4A4E69]/60'}`}>
+                                  {participants[otherUser].email}
+                                </p>
+                              )}
                             </div>
-                            <span className="text-[9px] font-bold text-[#4A4E69]/30 uppercase tracking-tighter shrink-0">
+                            <span className="text-[9px] font-bold text-[#4A4E69]/30 uppercase tracking-tighter shrink-0 mt-0.5">
                               {formatTime(chat.lastMessageAt)}
                             </span>
                           </div>
-                          <p className={`text-[11px] truncate ${isActive ? 'text-[#4A4E69]' : 'text-[#4A4E69]/40'}`}>
-                            {chat.lastMessage || 'Begin transmission...'}
+                          <p className={`text-[11px] truncate mt-1 ${isActive ? 'text-[#4A4E69]' : 'text-[#4A4E69]/40'}`}>
+                            {chat.lastMessage || 'No messages yet...'}
                           </p>
                         </div>
                       )}
