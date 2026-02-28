@@ -3,18 +3,26 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { API_BASE_URL } from '../../src/utils/api';
 
+let chatCache = {
+  messages: [],
+  sessionRef: null,
+  videoSuggestions: []
+};
+
 const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(chatCache.messages);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [sessionRef, setSessionRef] = useState(null);
-  const [videoSuggestions, setVideoSuggestions] = useState([]);
+  const [sessionRef, setSessionRef] = useState(chatCache.sessionRef);
+  const [videoSuggestions, setVideoSuggestions] = useState(chatCache.videoSuggestions);
 
-<<<<<<< HEAD
-  const actuallySendRequest = useCallback(async (updatedHistory) => {
-=======
+  useEffect(() => {
+    chatCache.messages = messages;
+    chatCache.sessionRef = sessionRef;
+    chatCache.videoSuggestions = videoSuggestions;
+  }, [messages, sessionRef, videoSuggestions]);
+
   const actuallySendRequest = useCallback(async (content, updatedHistory) => {
->>>>>>> upstream/main
     try {
       const auth = getAuth();
       const currentUser = auth.currentUser;
@@ -29,39 +37,14 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
           Authorization: `Bearer ${idToken}`
         },
         body: JSON.stringify({
-<<<<<<< HEAD
-          prompt: updatedHistory.at(-1).parts[0].text,
-=======
-          prompt: content,   
->>>>>>> upstream/main
+          prompt: content,
           isComplex,
           history: updatedHistory,
-          sessionRef
+          sessionRef,
+          enableTTS // Pass enableTTS to the backend
         }),
       });
 
-<<<<<<< HEAD
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.details ? `${data.error}: ${data.details}` : data.error || 'Chat failed');
-
-      const aiMessage = {
-        id: Date.now() + 1,
-        content: data.text,
-        sender: 'ai',
-        timestamp: new Date().toISOString(),
-        videoSuggestions: data.videos || []
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
-
-      if (data.sessionRef && !sessionRef) {
-        setSessionRef(data.sessionRef);
-      }
-
-      if (enableTTS && data.text) {
-        const audio = new Audio('response.wav');
-        audio.play();
-=======
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || 'Chat failed');
@@ -81,6 +64,7 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
 
       let accumulatedText = '';
       let buffer = '';
+      let lastSpokenIndex = 0; // Track the index of the last character spoken
 
       while (true) {
         const { done, value } = await reader.read();
@@ -100,6 +84,8 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
                 setMessages(prev => prev.map(msg =>
                   msg.id === aiMessageId ? { ...msg, content: accumulatedText } : msg
                 ));
+
+
               }
 
               if (data.done) {
@@ -109,13 +95,16 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
                     msg.id === aiMessageId ? { ...msg, videoSuggestions: data.videos } : msg
                   ));
                 }
+                if (enableTTS && accumulatedText) {
+                  const audio = new Audio('response.wav');
+                  audio.play().catch(e => console.warn('Audio play failed', e));
+                }
               }
             } catch (e) {
               console.warn('Error parsing stream chunk:', e);
             }
           }
         }
->>>>>>> upstream/main
       }
 
     } catch (err) {
@@ -124,11 +113,7 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
     } finally {
       setIsLoading(false);
     }
-<<<<<<< HEAD
-  }, [enableTTS, isComplex, sessionRef]);
-=======
-  }, [isComplex, sessionRef]);
->>>>>>> upstream/main
+  }, [isComplex, sessionRef, enableTTS]);
 
   const sendMessage = useCallback((content) => {
     if (!content.trim()) return;
@@ -143,25 +128,6 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
     setIsLoading(true);
     setError(null);
 
-<<<<<<< HEAD
-    // Step 1: Add user message to state
-    setMessages(prev => [...prev, userMessage]);
-
-    // Step 2: Create updatedHistory manually
-    const updatedHistory = [
-      ...messages.map(m => ({
-        role: m.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: m.content }]
-      })),
-      {
-        role: 'user',
-        parts: [{ text: content.trim() }]
-      }
-    ];
-
-    // Step 3: Call API
-    actuallySendRequest(updatedHistory);
-=======
     // Step 1: Add user message to state INSTANTLY
     setMessages(prev => [...prev, userMessage]);
 
@@ -173,7 +139,6 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
 
     // Step 3: Call API (passing content separately to avoid stale closure issues if any)
     actuallySendRequest(content.trim(), updatedHistory);
->>>>>>> upstream/main
 
   }, [messages, actuallySendRequest]);
 
@@ -195,7 +160,7 @@ const useChat = ({ enableTTS = true, isComplex = false } = {}) => {
     setMessages([]);
     setError(null);
     setSessionRef(null);
-  }, [enableTTS, isComplex, sessionRef]);
+  }, []); // Dependencies removed as they are not needed for clearing state
 
   return {
     messages,

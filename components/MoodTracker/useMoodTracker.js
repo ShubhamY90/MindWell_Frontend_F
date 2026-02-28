@@ -4,12 +4,16 @@ import { db, auth } from "../../context/firebase/firebase";
 
 const getDateStr = (date) => date.toLocaleDateString('en-CA'); // YYYY-MM-DD
 
+let globalMoodCache = null;
+let lastMoodFetchTime = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export const useMoodTracker = () => {
-    const [moodData, setMoodData] = useState([]);
-    const [latestTest, setLatestTest] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [todayMoodLogged, setTodayMoodLogged] = useState(false);
-    const [latestMood, setLatestMood] = useState(null);
+    const [moodData, setMoodData] = useState(globalMoodCache?.moodData || []);
+    const [latestTest, setLatestTest] = useState(globalMoodCache?.latestTest || null);
+    const [loading, setLoading] = useState(!globalMoodCache);
+    const [todayMoodLogged, setTodayMoodLogged] = useState(globalMoodCache?.todayMoodLogged || false);
+    const [latestMood, setLatestMood] = useState(globalMoodCache?.latestMood || null);
     const [submitting, setSubmitting] = useState(false);
 
     const fetchLatestMood = useCallback(async (user) => {
@@ -149,11 +153,20 @@ export const useMoodTracker = () => {
         }
     }, []);
 
-    const loadData = useCallback(async () => {
+    const loadData = useCallback(async (force = false) => {
         const user = auth.currentUser;
         if (!user) return;
 
-        setLoading(true);
+        if (!force && globalMoodCache && (Date.now() - lastMoodFetchTime < CACHE_TTL)) {
+            setMoodData(globalMoodCache.moodData);
+            setLatestTest(globalMoodCache.latestTest);
+            setTodayMoodLogged(globalMoodCache.todayMoodLogged);
+            setLatestMood(globalMoodCache.latestMood);
+            setLoading(false);
+            return;
+        }
+
+        if (!globalMoodCache || force) setLoading(true);
         try {
             const [dailyMoods, test, latestMoodData, hasRecentAssessment] = await Promise.all([
                 fetchDailyMoods(user),
@@ -162,15 +175,25 @@ export const useMoodTracker = () => {
                 checkRecentAssessment(user)
             ]);
 
-            setMoodData(dailyMoods);
-            setLatestMood(latestMoodData);
-
             const today = getDateStr(new Date());
             const todayDocRef = doc(db, "users", user.uid, "dailyMood", today);
             const todayDocSnap = await getDoc(todayDocRef);
-            setTodayMoodLogged(todayDocSnap.exists() && todayDocSnap.data().latestMood);
 
-            setLatestTest(hasRecentAssessment ? { recent: true } : test);
+            const isLogged = todayDocSnap.exists() && todayDocSnap.data().latestMood;
+            const derivedTest = hasRecentAssessment ? { recent: true } : test;
+
+            setMoodData(dailyMoods);
+            setLatestMood(latestMoodData);
+            setTodayMoodLogged(isLogged);
+            setLatestTest(derivedTest);
+
+            globalMoodCache = {
+                moodData: dailyMoods,
+                latestMood: latestMoodData,
+                todayMoodLogged: isLogged,
+                latestTest: derivedTest
+            };
+            lastMoodFetchTime = Date.now();
         } catch (error) {
             console.error("Error loading mood tracker data:", error);
         } finally {
@@ -208,7 +231,7 @@ export const useMoodTracker = () => {
                 });
                 await setDoc(moodDocRef, newDocData);
             }
-            await loadData();
+            await loadData(true); // force reload cache
             return true;
         } catch (error) {
             console.error("Error logging mood:", error);

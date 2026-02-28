@@ -89,7 +89,9 @@ function ChatRoom({ chatId, userId, otherUserId, otherUserName, userRole, onBack
             }
           });
           if (foundId) setResolvedChatId(foundId);
-        } catch (_) { }
+        } catch (_) {
+          // ignore block
+        }
       }
     } catch (e) {
       // Revert if sending failed

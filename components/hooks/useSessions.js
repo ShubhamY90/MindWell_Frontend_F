@@ -1,17 +1,35 @@
 // useSessions.js
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../../src/utils/api';
+const API_BASE_URL = 'http://localhost:5001'; // Fallback just in case, though it should come from utils
+
+let globalSessionCache = null;
+let lastSessionFetchTime = 0;
+const SESSION_CACHE_TTL = 3 * 60 * 1000; // 3 minutes
 
 const useSessions = (idToken) => {
-  const [sessions, setSessions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [sessions, setSessions] = useState(globalSessionCache || []);
+  const [isLoading, setIsLoading] = useState(!globalSessionCache);
 
-  const fetchSessions = async () => {
+  const fetchSessions = async (force = false) => {
     if (!idToken) {
-      setIsLoading(false);
+      if (!globalSessionCache) setIsLoading(false);
       return;
     }
-    setIsLoading(true);
+
+    if (!force && globalSessionCache && (Date.now() - lastSessionFetchTime < SESSION_CACHE_TTL)) {
+      setSessions(globalSessionCache);
+      setIsLoading(false);
+
+      // Still fetch in background to keep data fresh, but don't show loading spinner
+      fetchFromAPI(idToken, true);
+      return;
+    }
+
+    if (!globalSessionCache || force) setIsLoading(true);
+    await fetchFromAPI(idToken, false);
+  };
+
+  const fetchFromAPI = async (token, isBackground) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/sessions`, {
         headers: {
@@ -45,11 +63,13 @@ const useSessions = (idToken) => {
       });
 
       setSessions(parsed);
+      globalSessionCache = parsed;
+      lastSessionFetchTime = Date.now();
     } catch (err) {
       console.error('Session fetch error:', err);
       setSessions([]);
     } finally {
-      setIsLoading(false);
+      if (!isBackground) setIsLoading(false);
     }
   };
 

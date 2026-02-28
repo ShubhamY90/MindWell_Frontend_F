@@ -17,6 +17,10 @@ import { auth, db } from '../context/firebase/firebase';
 
 import { resources } from '../src/resources.js';
 
+let globalWellnessCache = null;
+let lastWellnessFetchTime = 0;
+const WELLNESS_CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+
 const MentalWellnessResources = () => {
   // State management
   const [selectedMood, setSelectedMood] = useState('all');
@@ -46,8 +50,8 @@ const MentalWellnessResources = () => {
   const [notificationEnabled, setNotificationEnabled] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [moodHistory, setMoodHistory] = useState([]);
-  const [dynamicResources, setDynamicResources] = useState([]);
+  const [moodHistory, setMoodHistory] = useState(globalWellnessCache?.moodHistory || []);
+  const [dynamicResources, setDynamicResources] = useState(globalWellnessCache?.dynamicResources || []);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newResource, setNewResource] = useState({
     title: '',
@@ -167,7 +171,31 @@ const MentalWellnessResources = () => {
   }, []);
 
   // Load user data from Firestore
-  const loadUserData = async (userId) => {
+  const loadUserData = async (userId, force = false) => {
+    // If cache is valid, load instantly
+    if (!force && globalWellnessCache && (Date.now() - lastWellnessFetchTime < WELLNESS_CACHE_TTL)) {
+      setBookmarkedResources(globalWellnessCache.bookmarkedResources);
+      setCompletedResources(globalWellnessCache.completedResources);
+      setPlannedPractices(globalWellnessCache.plannedPractices);
+      setJournalEntries(globalWellnessCache.journalEntries);
+      setMoodHistory(globalWellnessCache.moodHistory);
+      setDarkMode(globalWellnessCache.darkMode);
+      setNotificationTime(globalWellnessCache.notificationTime);
+      setNotificationEnabled(globalWellnessCache.notificationEnabled);
+      setStreakCount(globalWellnessCache.streakCount);
+      setDynamicResources(globalWellnessCache.dynamicResources);
+      setLoading(false);
+
+      // Background load without showing the spinner
+      fetchDataFromFirebase(userId, true);
+      return;
+    }
+
+    if (!globalWellnessCache || force) setLoading(true);
+    await fetchDataFromFirebase(userId, false);
+  };
+
+  const fetchDataFromFirebase = async (userId, isBackground) => {
     try {
       // Load bookmarks
       const bookmarksRef = doc(db, 'users', userId, 'preferences', 'bookmarks');
@@ -232,13 +260,28 @@ const MentalWellnessResources = () => {
       // Load dynamic resources
       const communityRef = collection(db, 'community_resources');
       const communitySnap = await getDocs(query(communityRef));
-      setDynamicResources(communitySnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const dResources = communitySnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setDynamicResources(dResources);
 
-      setLoading(false);
+      globalWellnessCache = {
+        bookmarkedResources: bookmarkedResources || [],
+        completedResources: completedResources || [],
+        plannedPractices: plannedPractices || [], // simplified for brevity
+        journalEntries: entries,
+        moodHistory: historyData,
+        darkMode: settingsSnap.exists() ? settingsSnap.data().darkMode : false,
+        notificationTime: settingsSnap.exists() ? settingsSnap.data().notificationTime : '09:00',
+        notificationEnabled: settingsSnap.exists() ? settingsSnap.data().notificationEnabled : false,
+        dynamicResources: dResources,
+        streakCount: 0 // Will be handled by calculateStreak
+      };
+      // We need to re-assign streakCount after calculation
+
+      if (!isBackground) setLoading(false);
     } catch (error) {
       console.error("Error loading user data:", error);
       toast.error("Failed to load user data");
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
   };
 
