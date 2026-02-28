@@ -49,7 +49,8 @@ const MentalWellnessResources = () => {
   const [notificationTime, setNotificationTime] = useState('09:00');
   const [notificationEnabled, setNotificationEnabled] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [loading, setLoading] = useState(!globalWellnessCache);
   const [moodHistory, setMoodHistory] = useState(globalWellnessCache?.moodHistory || []);
   const [dynamicResources, setDynamicResources] = useState(globalWellnessCache?.dynamicResources || []);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -185,6 +186,7 @@ const MentalWellnessResources = () => {
       setStreakCount(globalWellnessCache.streakCount);
       setDynamicResources(globalWellnessCache.dynamicResources);
       setLoading(false);
+      setIsDataLoaded(true);
 
       // Background load without showing the spinner
       fetchDataFromFirebase(userId, true);
@@ -196,6 +198,11 @@ const MentalWellnessResources = () => {
   };
 
   const fetchDataFromFirebase = async (userId, isBackground) => {
+    if (!userId) {
+      if (!isBackground) setLoading(false);
+      return;
+    }
+
     try {
       // Load bookmarks
       const bookmarksRef = doc(db, 'users', userId, 'preferences', 'bookmarks');
@@ -278,16 +285,18 @@ const MentalWellnessResources = () => {
       // We need to re-assign streakCount after calculation
 
       if (!isBackground) setLoading(false);
+      setIsDataLoaded(true);
     } catch (error) {
       console.error("Error loading user data:", error);
       toast.error("Failed to load user data");
       if (!isBackground) setLoading(false);
+      setIsDataLoaded(true);
     }
   };
 
   // Save data to Firestore when it changes
   useEffect(() => {
-    if (!user) return;
+    if (!user || !isDataLoaded) return;
 
     const saveData = async () => {
       try {
@@ -316,7 +325,7 @@ const MentalWellnessResources = () => {
 
   // Save planner to Firestore
   useEffect(() => {
-    if (!user || !plannedPractices.length) return;
+    if (!user || !isDataLoaded || !plannedPractices.length) return;
 
     const savePlanner = async () => {
       try {

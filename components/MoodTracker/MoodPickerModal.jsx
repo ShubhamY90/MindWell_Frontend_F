@@ -43,13 +43,13 @@ const MoodPickerModal = ({ isOpen, onClose, onLogMood, submitting }) => {
                     initial={{ opacity: 0, scale: 0.95, y: 40 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 40 }}
-                    className="relative w-full max-w-2xl bg-white/90 backdrop-blur-3xl rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(74,78,105,0.25)] overflow-hidden border border-white/60"
+                    className="relative w-full max-w-2xl max-h-[95vh] bg-white/90 backdrop-blur-3xl rounded-[2rem] sm:rounded-[4rem] shadow-[0_50px_100px_-20px_rgba(74,78,105,0.25)] border border-white/60"
                 >
                     {/* Animated Liquid Pulse */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-[#7C9885]/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 animate-pulse" />
 
-                    <div className="relative z-10 p-12 md:p-16">
-                        <div className="flex justify-between items-start mb-16">
+                    <div className="relative z-10 p-6 sm:p-8 md:p-10">
+                        <div className="flex justify-between items-start mb-6 sm:mb-8">
                             <div className="space-y-3">
                                 <motion.div
                                     initial={{ opacity: 0, x: -10 }}
@@ -59,7 +59,7 @@ const MoodPickerModal = ({ isOpen, onClose, onLogMood, submitting }) => {
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#7C9885] animate-ping" />
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2D3142]">Safe Space</span>
                                 </motion.div>
-                                <h3 className="text-4xl font-bold text-[#2D3142] tracking-tighter leading-none">
+                                <h3 className="text-3xl sm:text-4xl font-bold text-[#2D3142] tracking-tighter leading-none">
                                     What's moving <br /> through <span className="text-[#7C9885]">you?</span>
                                 </h3>
                             </div>
@@ -73,7 +73,7 @@ const MoodPickerModal = ({ isOpen, onClose, onLogMood, submitting }) => {
                             </motion.button>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-16">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
                             {Object.entries(moodConfig).map(([key, mood], idx) => (
                                 <motion.button
                                     key={key}
@@ -82,16 +82,16 @@ const MoodPickerModal = ({ isOpen, onClose, onLogMood, submitting }) => {
                                     transition={{ delay: 0.1 + (idx * 0.05) }}
                                     whileHover={{ y: -8, scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className={`flex flex-col items-center p-8 rounded-[2.5rem] border-2 transition-all duration-500 relative group ${selectedMood === key
+                                    className={`flex flex-col items-center p-3 sm:p-4 rounded-[1.5rem] border-2 transition-all duration-500 relative group ${selectedMood === key
                                         ? 'border-[#7C9885] bg-white shadow-2xl z-10'
                                         : `border-transparent bg-[#F9FBFF]/50 ${mood.hoverColor} hover:border-white`
                                         }`}
                                     onClick={() => setSelectedMood(key)}
                                 >
-                                    <div className={`w-20 h-20 rounded-3xl ${mood.color} flex items-center justify-center text-4xl mb-6 shadow-xl transition-transform duration-700 group-hover:rotate-6 ${selectedMood === key ? 'scale-110' : ''}`}>
+                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${mood.color} flex items-center justify-center text-2xl mb-2 shadow-xl transition-transform duration-700 group-hover:-translate-y-1 ${selectedMood === key ? 'scale-110' : ''}`}>
                                         {mood.icon}
                                     </div>
-                                    <span className={`text-[12px] font-bold uppercase tracking-[0.2em] ${selectedMood === key ? 'text-[#2D3142]' : 'text-[#4A4E69]/40 group-hover:text-[#4A4E69]'}`}>
+                                    <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${selectedMood === key ? 'text-[#2D3142]' : 'text-[#4A4E69]/40 group-hover:text-[#4A4E69]'}`}>
                                         {mood.name}
                                     </span>
                                     {selectedMood === key && (
@@ -107,13 +107,13 @@ const MoodPickerModal = ({ isOpen, onClose, onLogMood, submitting }) => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 20 }}
-                                    className="mb-16"
+                                    className="mb-6 sm:mb-8"
                                 >
-                                    <label className="block text-[10px] font-bold text-[#2D3142]/40 mb-6 uppercase tracking-[0.3em]">
+                                    <label className="block text-[10px] font-bold text-[#2D3142]/40 mb-3 uppercase tracking-[0.3em]">
                                         Context helps your narrative:
                                     </label>
                                     <textarea
-                                        className="w-full px-8 py-6 rounded-3xl bg-[#F9FBFF] border-2 border-transparent focus:border-[#7C9885]/20 text-[#2D3142] placeholder-[#4A4E69]/20 focus:outline-none focus:ring-8 focus:ring-[#7C9885]/5 transition-all resize-none text-lg font-light leading-relaxed h-32"
+                                        className="w-full px-6 py-4 rounded-3xl bg-[#F9FBFF] border-2 border-transparent focus:border-[#7C9885]/20 text-[#2D3142] placeholder-[#4A4E69]/20 focus:outline-none focus:ring-4 focus:ring-[#7C9885]/5 transition-all resize-none text-base font-light leading-relaxed h-20 sm:h-24"
                                         placeholder="Briefly describe the energy behind this feeling..."
                                         value={moodReason}
                                         onChange={(e) => setMoodReason(e.target.value)}

@@ -31,9 +31,26 @@ const MoodActionCards = ({
     showTest,
     showResources,
     onLogClick,
-    onTestClick
+    onTestClick,
+    user
 }) => {
     const navigate = useNavigate();
+
+    if (!user) {
+        return (
+            <div className="flex flex-col gap-6">
+                <ActionCard
+                    title="Log In to Reflect 🔒"
+                    description="Join us to start tracking your mood, unlocking personalized insights, and accessing wellness resources."
+                    icon={<Heart size={24} />}
+                    onClick={() => navigate('/auth')}
+                    bgColor="bg-white"
+                    textColor="text-[#4A4E69]"
+                    borderColor="border-[#4A4E69]/10"
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col gap-6">

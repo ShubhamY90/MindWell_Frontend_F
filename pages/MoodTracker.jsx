@@ -5,7 +5,7 @@ import MoodHero from '../components/MoodTracker/MoodHero';
 import MoodStatsCard from '../components/MoodTracker/MoodStatsCard';
 import MoodActionCards from '../components/MoodTracker/MoodActionCards';
 import MoodPickerModal from '../components/MoodTracker/MoodPickerModal';
-const MoodDashboard = () => {
+const MoodDashboard = ({ user }) => {
   const {
     moodData,
     latestTest,
@@ -64,6 +64,7 @@ const MoodDashboard = () => {
               moodData={moodData}
               latestMood={latestMood}
               loading={loading}
+              user={user}
             />
           </motion.div>
 
@@ -80,6 +81,7 @@ const MoodDashboard = () => {
               showResources={todayMoodLogged && latestMood}
               onLogClick={() => setShowMoodPicker(true)}
               onTestClick={() => {/* Navigation handled in component */ }}
+              user={user}
             />
           </motion.div>
         </div>

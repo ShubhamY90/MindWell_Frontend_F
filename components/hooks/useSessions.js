@@ -1,7 +1,6 @@
 // useSessions.js
 import { useEffect, useState } from 'react';
-const API_BASE_URL = 'http://localhost:5001'; // Fallback just in case, though it should come from utils
-
+import { API_BASE_URL } from '../../src/utils/api';
 let globalSessionCache = null;
 let lastSessionFetchTime = 0;
 const SESSION_CACHE_TTL = 3 * 60 * 1000; // 3 minutes

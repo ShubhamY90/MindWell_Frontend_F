@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Zap, AlertCircle, Battery, Activity } from 'lucide-react';
+import { TrendingUp, Zap, AlertCircle, Battery, Activity, Lock } from 'lucide-react';
 
 const moodConfig = {
     happy: { color: 'bg-yellow-100', icon: '😄', name: 'Happy', glow: 'shadow-yellow-200/50', iconColor: 'text-yellow-600' },
@@ -11,7 +11,7 @@ const moodConfig = {
     neutral: { color: 'bg-gray-100', icon: '😐', name: 'Neutral', glow: 'shadow-gray-100/50', iconColor: 'text-gray-600' }
 };
 
-const MoodStatsCard = ({ moodData, latestMood, loading }) => {
+const MoodStatsCard = ({ moodData, latestMood, loading, user }) => {
     const calculateTrend = (moods) => {
         if (!moods || moods.length < 2) return 'stable';
         const activeMoods = moods.map(m => m.mood);
@@ -49,7 +49,44 @@ const MoodStatsCard = ({ moodData, latestMood, loading }) => {
                     </div>
                 </div>
 
-                {loading ? (
+                {!user ? (
+                    <div className="relative space-y-12">
+                        {/* Blur overlay */}
+                        <div className="absolute -inset-4 z-20 backdrop-blur-md bg-white/40 flex flex-col items-center justify-center rounded-[2.5rem]">
+                            <div className="bg-white p-4 rounded-full shadow-lg mb-4 text-[#4A4E69]">
+                                <Lock className="w-8 h-8" />
+                            </div>
+                            <p className="text-[#4A4E69] font-bold tracking-widest uppercase text-sm">Log in to view insights</p>
+                        </div>
+
+                        {/* Garbage data */}
+                        <div className="grid grid-cols-7 gap-3 md:gap-4 opacity-40 blur-[4px]">
+                            {Array.from({ length: 7 }).map((_, i) => (
+                                <div key={i} className="flex flex-col items-center gap-4">
+                                    <div className="w-full aspect-square rounded-[1.5rem] bg-gray-100 flex items-center justify-center text-2xl shadow-sm">
+                                        😐
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-[9px] font-bold text-[#2D3142]/30 uppercase tracking-tighter mb-1">DAY</div>
+                                        <div className="text-sm font-bold text-[#2D3142]">0</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Garbage narrative */}
+                        <div className="p-8 rounded-[2rem] bg-[#F9FBFF]/60 border border-white/40 shadow-xl relative overflow-hidden opacity-40 blur-[4px]">
+                            <div className="relative z-10 space-y-3">
+                                <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
+                                    Your flow is <span className="text-[#7C9885] italic">steady and centered.</span>
+                                </p>
+                                <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
+                                    Unlock personalized emotional intelligence tracking to understand your unique journey.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ) : loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                         <motion.div
                             animate={{ rotate: 360 }}
