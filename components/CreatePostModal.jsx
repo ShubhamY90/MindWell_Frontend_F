@@ -175,8 +175,8 @@ const CreatePostModal = ({
                     type="button"
                     onClick={() => setMood(m.value)}
                     className={`p-4 rounded-2xl transition-all duration-500 group relative ${mood === m.value
-                      ? 'bg-white shadow-xl text-[#7C9885]'
-                      : 'text-gray-300 hover:text-[#4A4E69]'
+                        ? 'bg-white shadow-xl text-[#7C9885]'
+                        : 'text-gray-300 hover:text-[#4A4E69]'
                       }`}
                   >
                     {m.icon}

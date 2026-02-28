@@ -210,7 +210,7 @@ const ChatInput = ({ onSendMessage, disabled, darkMode }) => {
       )}
 
       {/* Chat Input */}
-      <div className="flex items-end space-x-3 w-full bg-transparent p-2">
+      <div className="flex items-end space-x-3 w-full bg-transparent px-2 pb-2">
         <div className="flex-1 relative group">
           <textarea
             ref={textareaRef}
@@ -218,17 +218,17 @@ const ChatInput = ({ onSendMessage, disabled, darkMode }) => {
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
             placeholder={
-              transcribing ? "Transcribing your voice..." :
-                recording ? "Recording in progress..." :
-                  sending ? "Sending..." :
-                    "Type your message or use voice input..."
+              transcribing ? "Listening to your thoughts..." :
+                recording ? "Listening..." :
+                  sending ? "Sharing..." :
+                    "Type a message or use voice..."
             }
             disabled={isInputDisabled}
-            className={`w-full px-6 py-4 rounded-3xl focus:ring-4 focus:ring-[#7C9885]/10 focus:border-[#7C9885]/30 resize-y min-h-[56px] max-h-[200px] transition-all duration-300 text-[15px] shadow-sm
+            className={`w-full px-6 py-4 rounded-[2rem] focus:ring-4 focus:ring-[#7C9885]/10 focus:border-[#7C9885]/30 resize-none min-h-[58px] max-h-[200px] transition-all duration-500 text-[14px] font-medium shadow-sm hover:shadow-md
               ${isInputDisabled ? 'opacity-50 cursor-not-allowed' : ''}
               ${darkMode
-                ? 'bg-gray-700 border border-gray-600 text-white placeholder-gray-400'
-                : 'bg-white border-2 border-transparent hover:border-[#7C9885]/10 text-[#2D3142] placeholder-[#4A4E69]/40'
+                ? 'bg-[#1E202C] border-gray-700/50 text-white placeholder-gray-500'
+                : 'bg-white border border-gray-100 text-[#2D3142] placeholder-gray-400'
               }`}
             rows={1}
             style={{ scrollbarWidth: 'none' }}
@@ -244,21 +244,18 @@ const ChatInput = ({ onSendMessage, disabled, darkMode }) => {
           type="button"
           onClick={handleVoiceToggle}
           disabled={isButtonDisabled}
-          className={`p-4 rounded-full transition-all duration-300 relative shrink-0
+          className={`p-4 rounded-2xl transition-all duration-500 relative shrink-0 flex items-center justify-center
             ${recording
-              ? 'bg-red-50 text-red-500 shadow-xl border border-red-500/20 scale-110'
+              ? 'bg-red-500 text-white shadow-xl scale-110'
               : isButtonDisabled
-                ? 'opacity-50 cursor-not-allowed'
+                ? 'opacity-40 cursor-not-allowed'
                 : darkMode
-                  ? 'bg-gray-600 hover:bg-gray-500 text-white shadow-lg'
-                  : 'bg-[#F9FBFF] hover:bg-[#7C9885]/10 text-[#7C9885] border border-[#7C9885]/20 hover:border-[#7C9885]/40 shadow-sm hover:shadow-md'
+                  ? 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white border border-gray-700'
+                  : 'bg-white hover:bg-gray-50 text-gray-400 hover:text-[#7C9885] border border-gray-100 shadow-sm'
             }`}
         >
           {recording ? (
-            <>
-              <MicOff size={22} className="animate-pulse" />
-              <div className="absolute -inset-1 rounded-full border border-red-300 animate-ping opacity-50"></div>
-            </>
+            <MicOff size={22} className="animate-pulse" />
           ) : (
             <Mic size={22} />
           )}
@@ -269,22 +266,20 @@ const ChatInput = ({ onSendMessage, disabled, darkMode }) => {
           disabled={!input.trim() || isButtonDisabled}
           onClick={() => {
             if (!input.trim() || isButtonDisabled || sending) return;
-
             handleSubmit(new Event('submit'));
           }}
-          className={`p-4 rounded-full transition-all duration-300 relative shrink-0 flex items-center justify-center
+          className={`p-4 rounded-2xl transition-all duration-500 relative shrink-0 flex items-center justify-center shadow-lg
             ${sending
-              ? 'bg-[#2D3142]/80 text-white cursor-not-allowed'
+              ? 'bg-[#7C9885]/80 text-white cursor-not-allowed translate-y-0'
               : !input.trim() || isButtonDisabled
-                ? 'opacity-50 cursor-not-allowed bg-[#2D3142]/50 text-white/50'
-                : 'hover:shadow-xl hover:-translate-y-0.5'
-            }
-            ${darkMode ? 'bg-blue-600 text-white' : 'bg-[#2D3142] text-white'}`}
+                ? 'opacity-30 cursor-not-allowed bg-gray-500 text-white'
+                : 'hover:shadow-[#7C9885]/30 hover:-translate-y-1 active:scale-95 bg-[#7C9885] text-white hover:bg-[#688270]'
+            }`}
         >
           {sending ? (
             <Loader2 size={22} className="animate-spin" />
           ) : (
-            <Send size={22} className="ml-0.5" />
+            <Send size={22} className="translate-x-0.5" />
           )}
         </button>
       </div>

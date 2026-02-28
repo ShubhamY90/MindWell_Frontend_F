@@ -59,7 +59,7 @@ export const Header = () => {
         >
           <div className="flex-1 px-6 sm:px-10 flex items-center justify-between">
             {/* Logo/Branding */}
-            <Link to={isAdmin ? "/view-requests" : "/"} className="flex items-center gap-3 cursor-pointer group shrink-0">
+            <Link to="/" className="flex items-center gap-3 cursor-pointer group shrink-0">
               <div className="p-1.5 sm:p-2 bg-[#2D3142] rounded-xl shadow-md transition-transform group-hover:scale-110">
                 <BrainCircuit className="h-4 w-4 sm:h-5 w-5 text-white" />
               </div>
@@ -71,21 +71,12 @@ export const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
               <div className="flex items-center gap-1 px-4 py-1.5 bg-white/5 rounded-full backdrop-blur-sm border border-white/10">
-                {isAdmin ? (
-                  <>
-                    <NavItem icon={Stars} label="Hive Network" to="/community" />
-                    <NavItem icon={Stars} label="View Requests" to="/view-requests" />
-                    <NavItem icon={Stars} label="Admin Reports" to="/admin-reports" />
-                  </>
-                ) : (
-                  <>
-                    <NavItem icon={Stars} label="AI Therapist" to="/chatbot" />
-                    <NavItem icon={Stars} label="My Chats" to="/my-chats" />
-                    <NavItem icon={Stars} label="Mood Tracker" to="/therapies" />
-                    <NavItem icon={Stars} label="Hive Network" to="/community" />
-                    <NavItem icon={Stars} label="Wellness Hub" to="/resources" />
-                  </>
-                )}
+                <NavItem icon={Stars} label="AI Therapist" to="/chatbot" />
+                <NavItem icon={Stars} label="My Chats" to="/my-chats" />
+                <NavItem icon={Stars} label="Mood Tracker" to="/therapies" />
+                <NavItem icon={Stars} label="Hive Network" to="/community" />
+                <NavItem icon={Stars} label="Wellness Hub" to="/resources" />
+                {/* <NavItem icon={Stars} label="Students" to="/psychiatrist" /> */}
               </div>
             </nav>
 
@@ -139,20 +130,10 @@ export const Header = () => {
               </button>
 
               <div className="space-y-4">
-                {isAdmin ? (
-                  <>
-                    <MobileNavItem label="Hive Network" to="/community" onClick={toggleMobileMenu} />
-                    <MobileNavItem label="View Requests" to="/view-requests" onClick={toggleMobileMenu} />
-                    <MobileNavItem label="Admin Reports" to="/admin-reports" onClick={toggleMobileMenu} />
-                  </>
-                ) : (
-                  <>
-                    <MobileNavItem label="AI Therapist" to="/chatbot" onClick={toggleMobileMenu} />
-                    <MobileNavItem label="My Chats" to="/my-chats" onClick={toggleMobileMenu} />
-                    <MobileNavItem label="Mood Tracker" to="/therapies" onClick={toggleMobileMenu} />
-                    <MobileNavItem label="Hive Network" to="/community" onClick={toggleMobileMenu} />
-                  </>
-                )}
+                <MobileNavItem label="AI Therapist" to="/chatbot" onClick={toggleMobileMenu} />
+                <MobileNavItem label="My Chats" to="/my-chats" onClick={toggleMobileMenu} />
+                <MobileNavItem label="Mood Tracker" to="/therapies" onClick={toggleMobileMenu} />
+                <MobileNavItem label="Hive Network" to="/community" onClick={toggleMobileMenu} />
 
                 <div className="pt-10 border-t border-gray-100 mt-10">
                   <button

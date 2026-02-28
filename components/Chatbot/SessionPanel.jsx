@@ -3,6 +3,7 @@ import SessionList from './SessionList';
 import useSessions from '../hooks/useSessions';
 import { API_BASE_URL } from '../../src/utils/api';
 import { useAuth } from '../../src/hooks/useAuth';
+import { getAuth } from 'firebase/auth';
 
 const SessionsPanel = ({ onSelectSession, darkMode }) => {
     const { user } = useAuth();

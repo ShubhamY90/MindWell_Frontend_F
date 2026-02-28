@@ -31,7 +31,7 @@ const MoodDashboard = () => {
       {/* Unified Dashboard Background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src="C:\Users\Abhishek Kumar Roy\.gemini\antigravity\brain\c0c50491-27aa-4a35-8a64-104b42b9f54b\weekly_synthesis_bg_1771999879232.png"
+          src="/dashboard-bg.png"
           className="w-full h-full object-cover opacity-5 pointer-events-none"
           alt="Background"
         />

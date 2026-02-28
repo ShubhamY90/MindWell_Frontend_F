@@ -158,7 +158,7 @@ const Post = ({
           <div className="space-y-4">
             <textarea
               value={editedPostContent}
-              onChange={(e) => handleEditChange(e.target.value)}
+              onChange={(e) => cancelEditing(e.target.value)} // Wait, local edit? 
               className="w-full p-4 bg-[#F9FBFF] border border-gray-100 rounded-3xl resize-none focus:ring-2 focus:ring-[#7C9885] focus:outline-none text-[#2D3142] h-32"
               placeholder="Edit your soul's message..."
             />
@@ -238,7 +238,7 @@ const Post = ({
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder={replyingTo ? `Replying to ${replyingTo.username}...` : "Write a mindful comment..."}
-                className="w-full bg-[#F9FBFF] border-none rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-[#7C9885] outline-none text-[#2D3142]"
+                className="w-full bg-[#F9FBFF] border-none rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-[#7C9885] outline-none"
               />
               {replyingTo && (
                 <button onClick={() => setReplyingTo(null)} className="absolute right-12 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-500">

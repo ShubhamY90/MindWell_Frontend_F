@@ -12,6 +12,7 @@ const Sidebar = ({
   activeTab,
   setActiveTab,
   currentUser,
+  darkMode,
   handleLogout
 }) => {
   const tabs = [

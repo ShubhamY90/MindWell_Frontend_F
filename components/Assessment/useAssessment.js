@@ -116,8 +116,9 @@ export const useAssessment = () => {
             };
 
             const userDocRef = doc(db, "users", user.uid);
-            const moodDayRef = collection(userDocRef, `moodAssessment/${dateStr}/assessments`);
-            await setDoc(doc(moodDayRef), assessmentData);
+            // Explicitly ensure 'assessments' subcollection name is plural
+            const assessmentsCollectionRef = collection(userDocRef, `moodAssessment/${dateStr}/assessments`);
+            await setDoc(doc(assessmentsCollectionRef), assessmentData);
 
             // Update daily dashboard stats
             const dailyMoodRef = doc(db, "users", user.uid, "dailyMood", dateStr);
@@ -126,7 +127,7 @@ export const useAssessment = () => {
                 timestamp: new Date()
             }, { merge: true });
 
-            console.log("✅ Results synced to cloud");
+            console.log("✅ Results synced to cloud in plural collection");
         } catch (error) {
             console.error("❌ Sync error:", error);
         }

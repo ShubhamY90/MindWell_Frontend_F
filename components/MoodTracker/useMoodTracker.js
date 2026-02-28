@@ -71,9 +71,9 @@ export const useMoodTracker = () => {
             }
 
             for (const dateStr of dates) {
-                const assessmentSubCollRef = collection(db, "users", user.uid, "moodAssessment", dateStr, "assessments");
-                const assessmentSnap = await getDocs(assessmentSubCollRef);
-                if (!assessmentSnap.empty) return true;
+                const assessmentCollectionRef = collection(db, "users", user.uid, "moodAssessment", dateStr, "assessments");
+                const assessmentDocs = await getDocs(assessmentCollectionRef);
+                if (!assessmentDocs.empty) return true;
             }
             return false;
         } catch (error) {
@@ -84,6 +84,7 @@ export const useMoodTracker = () => {
 
     const fetchLatestTest = useCallback(async (user) => {
         try {
+            console.log("🔍 Fetching latest test for user:", user.uid);
             const today = new Date();
             const dates = [];
             for (let i = 0; i < 7; i++) {
@@ -93,20 +94,23 @@ export const useMoodTracker = () => {
             }
 
             for (const dateStr of dates) {
-                const assessmentSubCollRef = collection(db, "users", user.uid, "moodAssessment", dateStr, "assessments");
-                const assessmentSnap = await getDocs(assessmentSubCollRef);
+                // Use segments consistently and ensure plural 'assessments'
+                const assessmentCollectionRef = collection(db, "users", user.uid, "moodAssessment", dateStr, "assessments");
+                const assessmentDocs = await getDocs(assessmentCollectionRef);
 
-                if (!assessmentSnap.empty) {
-                    const docSnap = assessmentSnap.docs[0];
+                if (!assessmentDocs.empty) {
+                    const latestDoc = assessmentDocs.docs[0];
+                    console.log("✅ Found recent assessment in plural collection:", latestDoc.id);
                     return {
-                        id: docSnap.id,
+                        id: latestDoc.id,
                         date: dateStr,
                         recent: true,
-                        ...docSnap.data()
+                        ...latestDoc.data()
                     };
                 }
             }
 
+            // Fallback: search across all assessments
             const assessmentRef = collection(db, "users", user.uid, "moodAssessment");
             const assessmentSnapshot = await getDocs(assessmentRef);
 
@@ -115,15 +119,20 @@ export const useMoodTracker = () => {
                 let latestDate = null;
 
                 for (const dateDoc of assessmentSnapshot.docs) {
-                    const assessmentSubCollRef = collection(db, "users", user.uid, "moodAssessment", dateDoc.id, "assessments");
-                    const assessmentSnap = await getDocs(assessmentSubCollRef);
+                    // Safety check: ensure dateDoc.id is a date and not 'assessment'
+                    if (dateDoc.id === 'assessment') {
+                        console.warn("⚠️ Found invalid 'assessment' document in moodAssessment collection level");
+                        continue;
+                    }
 
-                    if (!assessmentSnap.empty) {
-                        const docSnap = assessmentSnap.docs[0];
+                    const assessmentCollectionRef = collection(db, "users", user.uid, "moodAssessment", dateDoc.id, "assessments");
+                    const assessmentDocs = await getDocs(assessmentCollectionRef);
+
+                    for (const assessmentDoc of assessmentDocs.docs) {
                         const assessmentDate = new Date(dateDoc.id);
                         if (!latestDate || assessmentDate > latestDate) {
                             latestDate = assessmentDate;
-                            latestAssessment = { id: docSnap.id, date: dateDoc.id, recent: false, ...docSnap.data() };
+                            latestAssessment = { id: assessmentDoc.id, date: dateDoc.id, recent: false, ...assessmentDoc.data() };
                         }
                     }
                 }
@@ -132,6 +141,10 @@ export const useMoodTracker = () => {
             return null;
         } catch (error) {
             console.error("Error fetching latest test:", error);
+            // If the error message mentions a singular path, log it specifically
+            if (error.message && error.message.includes('assessment has 5')) {
+                console.error("❌ Detected invalid singular assessment path. Ensure you are not calling doc() on a subcollection path.");
+            }
             return null;
         }
     }, []);

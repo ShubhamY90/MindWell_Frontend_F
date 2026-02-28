@@ -84,10 +84,10 @@ const MoodActionCards = ({
                         exit={{ opacity: 0, scale: 0.9 }}
                     >
                         <ActionCard
-                            title="Chat with your AI Therapist 🤖"
-                            description="I'm here to listen and help you process your thoughts in a safe, judgment-free space."
+                            title="I have something special for you ✨"
+                            description="Based on our conversations, I've gathered some resources that I think will speak to your heart and help you grow."
                             icon={<Activity size={24} />}
-                            onClick={() => navigate('/chatbot')}
+                            onClick={() => navigate('/resources')}
                             bgColor="bg-white"
                             textColor="text-[#4A4E69]"
                             borderColor="border-[#4A4E69]/10"

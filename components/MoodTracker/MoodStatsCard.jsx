@@ -103,34 +103,45 @@ const MoodStatsCard = ({ moodData, latestMood, loading }) => {
                                     Internal Sync
                                 </h3>
 
-                                {trend === 'improving' ? (
-                                    <div className="space-y-3">
-                                        <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
-                                            Your spirit is <span className="text-[#7C9885]">lifting consistently.</span>
-                                        </p>
-                                        <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
-                                            The upward curve in your emotional energy suggests a deepening of self-awareness. Keep nurturing this light.
-                                        </p>
-                                    </div>
-                                ) : trend === 'declining' ? (
-                                    <div className="space-y-3">
-                                        <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
-                                            I notice some <span className="text-rose-500 italic">heaviness</span> recently.
-                                        </p>
-                                        <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
-                                            Remember, every storm is a guest. Be gentle with your thoughts today; you are exactly where you need to be.
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-3">
-                                        <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
-                                            Your flow is <span className="text-[#7C9885] italic">steady and centered.</span>
-                                        </p>
-                                        <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
-                                            Like a calm lake, this stability is a powerful foundation. You are cultivating a beautiful sense of inner resilience.
-                                        </p>
-                                    </div>
-                                )}
+                                {(() => {
+                                    // Safety: Filter out local resource paths from any dynamic content
+                                    const cleanText = (text) => text?.replace(/file:\/\/\/[^ "]+/g, '[Attachment]') || '';
+
+                                    if (trend === 'improving') {
+                                        return (
+                                            <div className="space-y-3">
+                                                <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
+                                                    Your spirit is <span className="text-[#7C9885]">lifting consistently.</span>
+                                                </p>
+                                                <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
+                                                    {cleanText("The upward curve in your emotional energy suggests a deepening of self-awareness. Keep nurturing this light.")}
+                                                </p>
+                                            </div>
+                                        );
+                                    } else if (trend === 'declining') {
+                                        return (
+                                            <div className="space-y-3">
+                                                <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
+                                                    I notice some <span className="text-rose-500 italic">heaviness</span> recently.
+                                                </p>
+                                                <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
+                                                    {cleanText("Remember, every storm is a guest. Be gentle with your thoughts today; you are exactly where you need to be.")}
+                                                </p>
+                                            </div>
+                                        );
+                                    } else {
+                                        return (
+                                            <div className="space-y-3">
+                                                <p className="text-xl font-extrabold text-[#1D1F2D] leading-relaxed">
+                                                    Your flow is <span className="text-[#7C9885] italic">steady and centered.</span>
+                                                </p>
+                                                <p className="text-sm text-[#4A4E69] leading-relaxed font-bold opacity-90">
+                                                    {cleanText("Like a calm lake, this stability is a powerful foundation. You are cultivating a beautiful sense of inner resilience.")}
+                                                </p>
+                                            </div>
+                                        );
+                                    }
+                                })()}
                             </div>
                         </motion.div>
                     </div>

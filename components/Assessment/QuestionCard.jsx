@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle, ChevronRight } from 'lucide-react';
+import Card3D from './Card3D';
 
 const QuestionCard = ({
     question,
@@ -18,11 +19,11 @@ const QuestionCard = ({
         setTimeout(() => {
             onAnswer(value);
             setSelectedIdx(null);
-        }, 600); // Slightly slower for elegance
+        }, 600);
     };
 
     return (
-        <div className="w-full min-h-[60vh] flex flex-col justify-center items-center px-6 relative">
+        <div className="w-full h-full flex flex-col justify-center items-center px-6 relative">
             <div className="w-full max-w-4xl">
                 <div className="mb-12 flex items-center justify-between">
                     <motion.button
@@ -55,71 +56,67 @@ const QuestionCard = ({
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={currentIndex}
-                        initial={{ opacity: 0, scale: 0.98, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.98, y: -20 }}
-                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative bg-white/50 backdrop-blur-[60px] rounded-[3.5rem] p-10 md:p-16 border border-white/60 shadow-[0_40px_80px_-20px_rgba(74,78,105,0.1)] overflow-hidden"
+                        initial={{ opacity: 0, rotateY: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                        exit={{ opacity: 0, rotateY: -20, scale: 0.95 }}
+                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        {/* Glow effect */}
-                        <div className="absolute -inset-px bg-gradient-to-b from-white/40 to-transparent opacity-50 pointer-events-none rounded-[3.5rem]" />
+                        <Card3D>
+                            <div className="relative bg-white/[0.03] backdrop-blur-[120px] rounded-[4rem] p-12 md:p-20 border border-white/20 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.2)] overflow-hidden">
+                                {/* Sub-pixel Grain & Glow */}
+                                <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
+                                <div className="absolute -inset-px bg-gradient-to-br from-white/30 to-transparent opacity-20 pointer-events-none rounded-[4rem]" />
 
-                        <motion.h2
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-3xl md:text-5xl font-bold text-[#2D3142] mb-12 leading-tight tracking-tighter"
-                        >
-                            {question.text}
-                        </motion.h2>
+                                <div className="relative z-10 flex flex-col items-center text-center">
+                                    <motion.h2
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="text-4xl md:text-6xl font-extrabold text-[#1D1F2D] mb-16 leading-[1.1] tracking-tighter"
+                                    >
+                                        {question.text}
+                                    </motion.h2>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {options.map((option, index) => (
-                                <motion.button
-                                    key={index}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.4 + (index * 0.1) }}
-                                    whileHover={{ scale: 1.02, y: -4 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={() => handleSelect(option.value, index)}
-                                    className={`w-full text-left p-6 rounded-3xl border-2 transition-all duration-300 flex items-center justify-between group relative overflow-hidden ${selectedIdx === index
-                                        ? 'bg-[#2D3142] border-[#2D3142] text-white shadow-xl scale-[1.02]'
-                                        : 'bg-white/50 border-white/40 text-[#4A4E69] hover:bg-white hover:border-white shadow-sm'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-6 relative z-10">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl transition-transform duration-500 group-hover:rotate-6 ${selectedIdx === index ? 'bg-white/10' : 'bg-[#F9FBFF] shadow-inner'
-                                            }`}>
-                                            {option.emoji}
-                                        </div>
-                                        <span className="font-bold text-lg tracking-tight">{option.label}</span>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                                        {options.map((option, index) => (
+                                            <motion.button
+                                                key={index}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.4 + (index * 0.1) }}
+                                                whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.08)" }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => handleSelect(option.value, index)}
+                                                className={`w-full text-left p-8 rounded-[2.5rem] border transition-all duration-300 flex items-center justify-between group relative overflow-hidden backdrop-blur-md ${selectedIdx === index
+                                                    ? 'bg-[#2D3142] border-[#2D3142] text-white shadow-2xl scale-[1.03]'
+                                                    : 'bg-white/[0.05] border-white/10 text-[#2D3142] hover:border-white/40 shadow-sm'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-6 relative z-10">
+                                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl transition-transform duration-500 group-hover:rotate-6 ${selectedIdx === index ? 'bg-white/10' : 'bg-white/20 shadow-inner'
+                                                        }`}>
+                                                        {option.emoji}
+                                                    </div>
+                                                    <span className="font-bold text-xl tracking-tight">{option.label}</span>
+                                                </div>
+
+                                                <div className="relative z-10">
+                                                    {selectedIdx === index ? (
+                                                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
+                                                            <CheckCircle className="h-7 w-7 text-[#7C9885]" />
+                                                        </motion.div>
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                                            <ChevronRight className="h-6 w-6 text-[#7C9885]" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </motion.button>
+                                        ))}
                                     </div>
-
-                                    <div className="relative z-10">
-                                        {selectedIdx === index ? (
-                                            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
-                                                <CheckCircle className="h-6 w-6 text-[#7C9885]" />
-                                            </motion.div>
-                                        ) : (
-                                            <div className="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                                                <ChevronRight className="h-5 w-5 text-[#7C9885]" />
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Subtle shine */}
-                                    {selectedIdx === index && (
-                                        <motion.div
-                                            initial={{ left: '-100%' }}
-                                            animate={{ left: '100%' }}
-                                            transition={{ duration: 0.8 }}
-                                            className="absolute top-0 bottom-0 w-full bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"
-                                        />
-                                    )}
-                                </motion.button>
-                            ))}
-                        </div>
+                                </div>
+                            </div>
+                        </Card3D>
                     </motion.div>
                 </AnimatePresence>
 
