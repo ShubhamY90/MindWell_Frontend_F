@@ -87,7 +87,7 @@ function AppShell() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', 'G-CGTMDT1G02', {
+      window.gtag('config', 'G-1K3YRQRFTP', {
         page_path: location.pathname + location.search,
       });
     }
