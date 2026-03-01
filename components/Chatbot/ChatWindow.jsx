@@ -145,8 +145,8 @@ const ChatWindow = ({ darkMode, currentUser, checkingAuth }) => {
             border-r flex flex-col h-full overflow-hidden z-20
           `}
         >
-          <div className={`transition-opacity duration-300 ${showHistory ? 'opacity-100' : 'opacity-0 invisible'}`}>
-            <div className="flex justify-between items-center mb-8 pl-2">
+          <div className={`transition-opacity duration-300 ${showHistory ? 'opacity-100 flex flex-col h-full' : 'opacity-0 invisible hidden'}`}>
+            <div className="flex justify-between items-center mb-8 pl-2 flex-shrink-0">
               <h2 className={`text-[10px] font-black tracking-[0.25em] uppercase ${darkMode ? 'text-gray-500' : 'text-[#7C9885]'}`}>Insights History</h2>
               <button
                 onClick={() => setShowHistory(false)}
@@ -155,7 +155,7 @@ const ChatWindow = ({ darkMode, currentUser, checkingAuth }) => {
                 <X size={18} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
+            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
               <SessionPanel
                 onSelectSession={handleSelectSession}
                 darkMode={darkMode}
