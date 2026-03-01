@@ -135,7 +135,7 @@ const MessageBubble = ({ message, videoSuggestions, isUser, timestamp, darkMode,
 
         {/* Professional Video Overlay (Modal-style) */}
         {playingVideo && activeEmbedUrl && (
-          <div id="mindwell-video-modal" className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
+          <div id="vaam-video-modal" className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
             <div
               className="absolute inset-0 bg-black/95 backdrop-blur-md"
               onClick={() => setPlayingVideo(null)}

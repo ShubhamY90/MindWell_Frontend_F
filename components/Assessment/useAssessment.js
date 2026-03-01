@@ -49,20 +49,26 @@ export const useAssessment = () => {
     const [stage, setStage] = useState(0); // 0: Intro, 1: Mood Pulse, 2: Questions, 3: Results
 
     const auth = getAuth();
+    const isClient = typeof window !== 'undefined';
 
     // Load persistence
     useEffect(() => {
-        const saved = localStorage.getItem('mindWellAssessment');
-        if (saved) {
-            const state = JSON.parse(saved);
-            setSelectedMood(state.selectedMood);
-            setQuestions(state.questions || []);
-            setCurrentQuestionIndex(state.currentQuestionIndex || 0);
-            setAnswers(state.answers || []);
-            setResult(state.result);
-            setStage(state.stage || 0);
+        if (!isClient) return;
+        try {
+            const saved = localStorage.getItem('vaamAssessment');
+            if (saved) {
+                const state = JSON.parse(saved);
+                setSelectedMood(state.selectedMood);
+                setQuestions(state.questions || []);
+                setCurrentQuestionIndex(state.currentQuestionIndex || 0);
+                setAnswers(state.answers || []);
+                setResult(state.result);
+                setStage(state.stage || 0);
+            }
+        } catch (error) {
+            console.error("Failed to load assessment state from localStorage", error);
         }
-    }, [setSelectedMood, setQuestions, setCurrentQuestionIndex, setAnswers, setResult, setStage]);
+    }, [setSelectedMood, setQuestions, setCurrentQuestionIndex, setAnswers, setResult, setStage, isClient]);
 
     // Handle logout-driven reset
     useEffect(() => {
@@ -78,8 +84,9 @@ export const useAssessment = () => {
     // Save persistence
     useEffect(() => {
         const state = { selectedMood, questions, currentQuestionIndex, answers, result, stage };
-        localStorage.setItem('mindWellAssessment', JSON.stringify(state));
-    }, [selectedMood, questions, currentQuestionIndex, answers, result, stage]);
+        if (!isClient) return;
+        localStorage.setItem('vaamAssessment', JSON.stringify(state));
+    }, [selectedMood, questions, currentQuestionIndex, answers, result, stage, isClient]);
 
     const startAssessment = (mood) => {
         setLoading(true);
@@ -134,7 +141,9 @@ export const useAssessment = () => {
     };
 
     const reset = () => {
-        localStorage.removeItem('mindWellAssessment');
+        if (isClient) {
+            localStorage.removeItem('vaamAssessment');
+        }
         setSelectedMood(null);
         setQuestions([]);
         setCurrentQuestionIndex(0);

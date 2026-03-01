@@ -64,7 +64,7 @@ export const Header = () => {
                 <BrainCircuit className="h-4 w-4 sm:h-5 w-5 text-white" />
               </div>
               <h1 className="font-bold text-[#2D3142] tracking-tighter text-lg sm:text-xl">
-                MindWell
+                Vaam
               </h1>
             </Link>
 

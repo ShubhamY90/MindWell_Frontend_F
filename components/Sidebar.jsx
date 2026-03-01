@@ -87,7 +87,7 @@ const Sidebar = ({
         {open && (
           <div className="pt-6 border-t border-gray-50 px-2">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[10px] font-black text-[#4A4E69]/40 uppercase tracking-[0.2em]">MindWell Suite</h3>
+              <h3 className="text-[10px] font-black text-[#4A4E69]/40 uppercase tracking-[0.2em]">Vaam Suite</h3>
               <Sparkles className="h-3 w-3 text-[#7C9885]/40" />
             </div>
             <div className="grid grid-cols-2 gap-3">

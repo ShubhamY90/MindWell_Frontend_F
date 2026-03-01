@@ -179,7 +179,7 @@ const ChatWindow = ({ darkMode, currentUser, checkingAuth }) => {
               )}
               <div className="flex flex-col">
                 <h1 className="text-xl font-black tracking-tight flex items-center gap-2">
-                  <span className={darkMode ? 'text-[#7C9885]' : 'text-[#5E7A67]'}>MindWell</span>
+                  <span className={darkMode ? 'text-[#7C9885]' : 'text-[#5E7A67]'}>Vaam</span>
                   <span className="font-medium opacity-80">Counselor</span>
                 </h1>
                 <div className="flex items-center gap-2 mt-0.5">
@@ -226,7 +226,7 @@ const ChatWindow = ({ darkMode, currentUser, checkingAuth }) => {
                 </h2>
 
                 <p className={`text-base md:text-lg opacity-60 max-w-lg mx-auto leading-relaxed mb-16 font-medium`}>
-                  MindWell AI is more than a chatbot—it's a supportive companion designed to listen, reflect, and guide you through life's complexities.
+                  Vaam AI is more than a chatbot—it's a supportive companion designed to listen, reflect, and guide you through life's complexities.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto w-full">

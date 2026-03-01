@@ -45,7 +45,7 @@ const CookiePolicy = () => {
       </section>
 
       <p className="mt-8">
-        If you have any questions, contact us at <a href="mailto:aryabrata.swain.ug23@nsut.ac.in" className="text-blue-600 underline">support@mindwell.com</a>.
+        If you have any questions, contact us at <a href="mailto:aryabrata.swain.ug23@nsut.ac.in" className="text-blue-600 underline">support@vaam.com</a>.
       </p>
     </div>
   );

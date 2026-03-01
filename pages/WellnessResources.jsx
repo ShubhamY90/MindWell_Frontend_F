@@ -1074,7 +1074,7 @@ const MentalWellnessResources = () => {
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#4A4E69]">Curated For You</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-[#1D1F2D] drop-shadow-sm">
-              MindWell <span className="text-[#7C9885]">Resources</span>
+              Vaam <span className="text-[#7C9885]">Resources</span>
             </h1>
             <p className="text-[#4A4E69] text-lg font-medium max-w-2xl leading-relaxed opacity-80 mt-2">
               Explore your personalized toolkit of exercises, articles, and guided sessions.

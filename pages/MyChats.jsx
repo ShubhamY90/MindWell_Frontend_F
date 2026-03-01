@@ -132,7 +132,7 @@ function MyChats() {
               loading: false
             };
           } else {
-            newDetails[id] = { name: "MindWell User", email: "", role: "unknown", loading: false };
+            newDetails[id] = { name: "Vaam User", email: "", role: "unknown", loading: false };
           }
         } catch (err) {
           console.warn("Failed to fetch user info:", id);
