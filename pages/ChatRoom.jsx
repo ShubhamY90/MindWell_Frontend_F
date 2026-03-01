@@ -3,7 +3,7 @@ import { db } from "../context/firebase/firebase";
 import { collection, query, orderBy, onSnapshot, where, getDocs, addDoc } from "firebase/firestore";
 import { sendMessage } from "../src/utils/sendMessage";
 
-function ChatRoom({ chatId, userId, otherUserId, otherUserName, userRole, onBack }) {
+function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRole, onBack }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [resolvedChatId, setResolvedChatId] = useState(chatId || null);
@@ -71,7 +71,11 @@ function ChatRoom({ chatId, userId, otherUserId, otherUserName, userRole, onBack
     setError("");
 
     try {
-      await sendMessage(userId, otherUserId, messageToSend, { allowCreate: userRole === 'psychiatrist' });
+      await sendMessage(userId, otherUserId, messageToSend, {
+        allowCreate: userRole === 'psychiatrist',
+        senderName: userName || 'Unknown',
+        receiverName: otherUserName || 'Unknown'
+      });
 
       // If chat was just created (e.g., psychiatrist initiated), resolve it now
       if (!resolvedChatId) {

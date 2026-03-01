@@ -392,7 +392,12 @@ function MyChats() {
                               <p className={`font-bold truncate text-[13px] ${isActive ? 'text-[#2D3142]' : 'text-[#4A4E69]'}`}>
                                 {(() => {
                                   const p = participants[otherUser];
-                                  if (!p || p.loading) return "Loading...";
+                                  if (!p || p.loading) {
+                                    // Fallback to chat document name if available
+                                    if (chat.senderId === otherUser && chat.senderName) return chat.senderName;
+                                    if (chat.receiverId === otherUser && chat.receiverName) return chat.receiverName;
+                                    return "Loading...";
+                                  }
                                   const isDoc = ['psychiatrist', 'doctor', 'company_doctor'].includes(p.role);
                                   return isDoc ? `Doc. ${p.name}` : p.name;
                                 })()}
@@ -495,6 +500,7 @@ function MyChats() {
               key={selectedChat.id}
               chatId={selectedChat.id}
               userId={userId}
+              userName={user?.name || user?.email}
               otherUserId={selectedChat.otherUserId}
               otherUserName={(() => {
                 const p = participants[selectedChat.otherUserId];

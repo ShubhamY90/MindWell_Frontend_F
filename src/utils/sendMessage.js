@@ -20,6 +20,8 @@ export async function sendMessage(senderId, receiverId, text, options = {}) {
     body: JSON.stringify({
       senderId,
       receiverId,
+      senderName: options.senderName || '', // New field
+      receiverName: options.receiverName || '', // New field
       text: text.trim(),
       options,
     }),
