@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../context/firebase/firebase";
-import { collection, query, orderBy, onSnapshot, where, getDocs, addDoc } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, where, getDocs, addDoc, doc, getDoc } from "firebase/firestore";
 import { sendMessage } from "../src/utils/sendMessage";
 
 function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRole, onBack }) {
@@ -9,6 +9,31 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
   const [resolvedChatId, setResolvedChatId] = useState(chatId || null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [fetchedOtherUserName, setFetchedOtherUserName] = useState('');
+
+  // Fetch the actual name from the users collection explicitly
+  useEffect(() => {
+    async function fetchName() {
+      if (!otherUserId) return;
+      try {
+        const userDoc = await getDoc(doc(db, "users", otherUserId));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          let name = data.name || data.firstName || '';
+          if (['psychiatrist', 'doctor', 'company_doctor'].includes(data.role)) {
+            name = `Doc. ${name}`;
+          }
+          setFetchedOtherUserName(name);
+        }
+      } catch (err) {
+        console.error("Failed to fetch other user name", err);
+      }
+    }
+    fetchName();
+  }, [otherUserId]);
+
+  const displayOtherUserName = fetchedOtherUserName || otherUserName || "User";
 
   // Resolve existing chat id if not provided
   useEffect(() => {
@@ -73,8 +98,8 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
     try {
       await sendMessage(userId, otherUserId, messageToSend, {
         allowCreate: userRole === 'psychiatrist',
-        senderName: userName || 'Unknown',
-        receiverName: otherUserName || 'Unknown'
+        senderName: userName || 'User',
+        receiverName: displayOtherUserName
       });
 
       // If chat was just created (e.g., psychiatrist initiated), resolve it now
@@ -118,10 +143,10 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
             </svg>
           </button>
           <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md`}>
-            {(otherUserName || otherUserId).charAt(0).toUpperCase()}
+            {displayOtherUserName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-800">{otherUserName || "Secured Sanctuary"}</h3>
+            <h3 className="text-sm font-bold text-slate-800">{displayOtherUserName}</h3>
             <div className="flex items-center text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
               <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-2 animate-pulse" />
               Secure Link Active
