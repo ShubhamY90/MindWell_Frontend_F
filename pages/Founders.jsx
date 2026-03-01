@@ -53,7 +53,7 @@ const itemVariants = {
 
 const Founders = () => {
     return (
-        <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F9FBFF] overflow-hidden relative">
+        <div className="min-h-screen md:h-screen w-full flex flex-col items-center justify-center bg-[#F9FBFF] overflow-y-auto md:overflow-hidden relative py-20 md:py-0">
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-100/50 blur-3xl mix-blend-multiply opacity-50 animate-blob" />
                 <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] rounded-full bg-purple-100/50 blur-3xl mix-blend-multiply opacity-50 animate-blob animation-delay-2000" />
