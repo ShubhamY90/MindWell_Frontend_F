@@ -31,6 +31,7 @@ const MyChats = lazy(() => import("../pages/MyChats"));
 
 const ViewRequests = lazy(() => import("../pages/ViewRequests"));
 const SuggestedResources = lazy(() => import("../pages/SuggestedResources"));
+const Founders = lazy(() => import("../pages/Founders"));
 import AdminReportsPage from '../pages/AdminReportsPage';
 
 const hideHeaderOnPaths = ["/auth"];
@@ -133,6 +134,7 @@ function AppShell() {
               <Route path="/cookie-policy" element={<CookiePolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/admin-reports" element={<AdminReportsPage />} />
+              <Route path="/founders" element={<Founders />} />
               <Route
                 path="/my-chats"
                 element={

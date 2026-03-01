@@ -613,6 +613,34 @@ export default function Home() {
         </motion.section>
       </main>
 
+      {/* Founders Section CTA */}
+      <section className="relative bg-white border-t border-[#7C9885]/10 mt-24 py-20 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-30">
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-100/50 rounded-full blur-3xl mix-blend-multiply" />
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl mix-blend-multiply" />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-[#2D3142] mb-6 tracking-tight">Meet the Founders</h2>
+            <p className="text-[#4A4E69] text-xl font-light leading-relaxed mb-10">
+              Discover the minds and the mission behind Vaam. We are a team of passionate engineers committed to democratizing mental wellness.
+            </p>
+            <Link
+              to="/founders"
+              className="inline-flex items-center gap-3 bg-white border border-[#7C9885]/30 text-[#2D3142] px-10 py-5 rounded-[1.25rem] text-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 hover:bg-[#F9FBFF]"
+            >
+              Get to know us
+              <ArrowRight className="h-5 w-5 text-[#7C9885]" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Footer - Enhanced Responsive */}
       <footer className="bg-gray-50 border-t border-gray-200 mt-8 sm:mt-12 lg:mt-20">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
