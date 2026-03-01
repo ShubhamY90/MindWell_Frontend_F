@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { db } from "../context/firebase/firebase";
 import { collection, query, orderBy, onSnapshot, where, getDocs, addDoc, doc, getDoc } from "firebase/firestore";
 import { sendMessage } from "../src/utils/sendMessage";
+import { decryptText } from "../src/utils/encryption";
 
 function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRole, onBack }) {
   const [messages, setMessages] = useState([]);
@@ -9,6 +10,7 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
   const [resolvedChatId, setResolvedChatId] = useState(chatId || null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const [fetchedOtherUserName, setFetchedOtherUserName] = useState('');
 
@@ -83,17 +85,46 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
       collection(db, "chats", resolvedChatId, "messages"),
       orderBy("timestamp", "asc")
     );
-    const unsubscribe = onSnapshot(q, snapshot => {
-      setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubscribe = onSnapshot(q, async snapshot => {
+      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const sharedPassword = [userId, otherUserId].sort().join("_");
+
+      const decryptedDocs = await Promise.all(docs.map(async d => {
+        if (d.iv && d.salt) {
+          try {
+            const decText = await decryptText({ data: d.text, iv: d.iv, salt: d.salt }, sharedPassword);
+            return { ...d, text: decText };
+          } catch (e) {
+            return { ...d, text: "🔒 Decryption Failed" };
+          }
+        }
+        return d;
+      }));
+      setMessages(decryptedDocs);
     });
     return () => unsubscribe();
-  }, [resolvedChatId]);
+  }, [resolvedChatId, userId, otherUserId]);
+
+  // Auto-scroll to bottom when messages update
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!newMessage.trim()) return;
     const messageToSend = newMessage;
     setNewMessage(""); // Clear input instantly for snappy UI feedback
     setError("");
+
+    // Optimistically update UI
+    const optimisticMsg = {
+      id: 'opt_' + Date.now(),
+      senderId: userId,
+      receiverId: otherUserId,
+      text: messageToSend,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
 
     try {
       await sendMessage(userId, otherUserId, messageToSend, {
@@ -124,6 +155,7 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
       }
     } catch (e) {
       // Revert if sending failed
+      setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
       setNewMessage(messageToSend);
       setError(e?.message || "Failed to send message");
     }
@@ -212,6 +244,7 @@ function ChatRoom({ chatId, userId, userName, otherUserId, otherUserName, userRo
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}

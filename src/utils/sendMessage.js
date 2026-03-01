@@ -1,4 +1,5 @@
 import { getAuth } from "firebase/auth";
+import { encryptText } from "./encryption";
 import { API_BASE_URL } from "./api";
 
 export async function sendMessage(senderId, receiverId, text, options = {}) {
@@ -11,6 +12,12 @@ export async function sendMessage(senderId, receiverId, text, options = {}) {
 
   const idToken = await currentUser.getIdToken();
 
+  // 1. Derive shared symmetric key (password) via sorting UIDs
+  const sharedPassword = [senderId, receiverId].sort().join("_");
+
+  // 2. Encrypt the text payload
+  const encryptedPayload = await encryptText(text.trim(), sharedPassword);
+
   const response = await fetch(`${API_BASE_URL}/api/messages/send`, {
     method: "POST",
     headers: {
@@ -22,7 +29,9 @@ export async function sendMessage(senderId, receiverId, text, options = {}) {
       receiverId,
       senderName: options.senderName || '', // New field
       receiverName: options.receiverName || '', // New field
-      text: text.trim(),
+      text: encryptedPayload.data,     // Send encrypted text
+      iv: encryptedPayload.iv,        // Required for decryption
+      salt: encryptedPayload.salt,    // Required for decryption
       options,
     }),
   });
