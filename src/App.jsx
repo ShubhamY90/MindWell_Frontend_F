@@ -85,6 +85,14 @@ function AppShell() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('config', 'G-FLK2RSW65D', {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location]);
+
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   useEffect(() => {
