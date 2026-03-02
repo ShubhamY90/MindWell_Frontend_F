@@ -113,7 +113,7 @@ MindWell is a digital companion for mental health, offering:
 
 ```bash
 # Clone the repo
-git clone https://github.com/Abhishek-kroy/Mindwell_Frontend
+git clone https://github.com/ShubhamY90/Mindwell_Frontend_F
 cd MindWell
 
 # Install dependencies
