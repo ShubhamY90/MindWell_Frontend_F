@@ -115,22 +115,20 @@ const Post = ({
   };
 
   return (
-    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] p-6 md:p-8 transition-all hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)]">
+    <div className="bg-white/50 backdrop-blur-2xl rounded-[2rem] border border-white/60 shadow-[0_8px_32px_rgba(31,38,135,0.04)] p-6 md:p-8 transition-all hover:shadow-[0_8px_32px_rgba(31,38,135,0.08)] hover:bg-white/60 flex flex-col gap-6 relative">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7C9885] to-[#4A4E69] flex items-center justify-center text-white shadow-lg">
-            {post.anonymous ? <IncognitoGlasses className="h-6 w-6" /> : <span className="font-bold">{post.userInitials}</span>}
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7C9885]/20 to-[#4A4E69]/20 border border-white/50 flex items-center justify-center text-[#2D3142]">
+            {post.anonymous ? <IncognitoGlasses className="h-6 w-6 opacity-70" /> : <span className="font-bold text-lg">{post.userInitials}</span>}
           </div>
-          <div>
+          <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <h3 className="font-bold text-[#2D3142] text-lg">{post.username}</h3>
+              <h3 className="font-bold text-[#2D3142] text-base">{post.username}</h3>
               {getMoodIcon(post.mood)}
             </div>
-            <p className="text-xs text-[#4A4E69]/60 font-medium tracking-wide flex items-center">
+            <p className="text-xs text-[#4A4E69]/60 font-medium">
               {formatTimestamp(post.timestamp)}
-              <span className="mx-2">•</span>
-              {post.anonymous ? "Anonymous Soul" : "Community Member"}
             </p>
           </div>
         </div>
@@ -153,29 +151,29 @@ const Post = ({
       </div>
 
       {/* Content */}
-      <div className="mb-6">
+      <div className="px-1">
         {isEditing ? (
           <div className="space-y-4">
             <textarea
               value={editedPostContent}
-              onChange={(e) => cancelEditing(e.target.value)} // Wait, local edit? 
-              className="w-full p-4 bg-[#F9FBFF] border border-gray-100 rounded-3xl resize-none focus:ring-2 focus:ring-[#7C9885] focus:outline-none text-[#2D3142] h-32"
+              onChange={(e) => handleEditChange(e.target.value)} 
+              className="w-full p-4 bg-white/50 backdrop-blur-sm border border-white/60 rounded-3xl resize-none focus:ring-2 focus:ring-[#7C9885] focus:outline-none text-[#2D3142] h-32"
               placeholder="Edit your soul's message..."
             />
             <div className="flex justify-end space-x-3">
-              <button onClick={cancelEditing} className="px-6 py-2 text-[#4A4E69]/60 font-bold text-sm">Cancel</button>
-              <button onClick={saveEditedPost} className="bg-[#7C9885] text-white px-6 py-2 rounded-xl font-bold text-sm shadow-md">Save Changes</button>
+              <button onClick={cancelEditing} className="px-6 py-2 text-[#4A4E69]/60 font-bold text-sm hover:bg-white/40 rounded-xl transition-colors">Cancel</button>
+              <button onClick={saveEditedPost} className="bg-[#7C9885] text-white px-6 py-2 rounded-xl font-bold text-sm shadow-md hover:bg-[#6c8675] transition-colors">Save Changes</button>
             </div>
           </div>
         ) : (
           <div>
-            <p className="text-[#2D3142] text-lg leading-relaxed font-light whitespace-pre-wrap">
+            <p className="text-[#2D3142] text-base leading-relaxed whitespace-pre-wrap">
               {post.content}
             </p>
             {post.tags && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {post.tags.map((tag, i) => (
-                  <span key={i} className="text-[#7C9885] font-bold text-xs bg-[#7C9885]/10 px-3 py-1 rounded-full">{tag}</span>
+                  <span key={i} className="text-[#7C9885] font-semibold text-[11px] bg-white/50 border border-white/60 px-3 py-1 rounded-xl backdrop-blur-md shadow-sm">{tag}</span>
                 ))}
               </div>
             )}
@@ -185,25 +183,25 @@ const Post = ({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-        <div className="flex items-center space-x-2 md:space-x-6">
+      <div className="flex items-center justify-between pt-4 border-t border-white/50">
+        <div className="flex items-center space-x-3">
           {/* Reaction Group */}
-          <div className="flex items-center bg-[#F9FBFF] rounded-2xl p-1 border border-gray-50">
+          <div className="flex items-center bg-white/40 backdrop-blur-md rounded-2xl p-1 border border-white/60 shadow-sm">
             <button
               onClick={() => handleLike(post.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition ${isLiked ? 'bg-[#7C9885] text-white shadow-md' : 'text-[#4A4E69]/60 hover:bg-white'}`}
+              className={`flex items-center space-x-1.5 px-4 py-1.5 rounded-xl transition ${isLiked ? 'bg-white text-red-500 shadow-sm' : 'text-[#4A4E69]/80 hover:bg-white/60'}`}
             >
-              <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-              <span className="text-sm font-bold">{post.likes || 0}</span>
+              <Heart className={`h-4 w-4 ${isLiked ? 'fill-current text-red-500' : ''}`} />
+              <span className="text-sm font-semibold">{post.likes || 0}</span>
             </button>
 
-            <div className="relative group/react">
-              <button className="p-2 text-[#4A4E69]/40 hover:text-amber-400">
+            <div className="relative group/react flex items-center border-l border-white/50 pl-1 ml-1">
+              <button className="p-1.5 text-[#4A4E69]/60 hover:text-amber-500 transition-colors">
                 <Smile className="h-4 w-4" />
               </button>
-              <div className="absolute bottom-full left-0 mb-4 opacity-0 group-hover/react:opacity-100 transition-opacity bg-white p-2 rounded-2xl shadow-xl border border-gray-50 flex space-x-1 pointer-events-none group-hover/react:pointer-events-auto">
+              <div className="absolute bottom-full left-[-20px] mb-3 opacity-0 group-hover/react:opacity-100 transition-opacity bg-white/80 backdrop-blur-xl p-2 rounded-2xl shadow-xl border border-white/60 flex space-x-1 pointer-events-none group-hover/react:pointer-events-auto z-20">
                 {Object.entries(reactionTypes).map(([type, { icon, color }]) => (
-                  <button key={type} onClick={() => handleReaction(post.id, type)} className={`p-2 rounded-xl hover:bg-gray-50 transition ${userReaction === type ? 'bg-gray-100' : ''}`}>
+                  <button key={type} onClick={() => handleReaction(post.id, type)} className={`p-2 rounded-xl hover:bg-white transition hover:scale-110 ${userReaction === type ? 'bg-white shadow-sm ring-1 ring-gray-100' : ''}`}>
                     <span className={color}>{icon}</span>
                   </button>
                 ))}
@@ -211,25 +209,25 @@ const Post = ({
             </div>
           </div>
 
-          <button onClick={() => toggleComments(post.id)} className={`flex items-center space-x-2 px-4 py-2 rounded-2xl transition ${showComments[post.id] ? 'bg-[#4A4E69] text-white' : 'text-[#4A4E69]/60 hover:bg-[#F9FBFF]'}`}>
+          <button onClick={() => toggleComments(post.id)} className={`flex items-center space-x-2 px-4 py-1.5 rounded-2xl transition bg-white/40 backdrop-blur-md border border-white/60 shadow-sm ${showComments[post.id] ? 'bg-white text-[#2D3142]' : 'text-[#4A4E69]/80 hover:bg-white/60'}`}>
             <MessageCircle className="h-4 w-4" />
-            <span className="text-sm font-bold">{post.comments || 0}</span>
+            <span className="text-sm font-semibold">{post.comments || 0}</span>
           </button>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <button onClick={() => handleBookmark(post.id)} className={`p-2 transition ${isBookmarked ? 'text-[#7C9885]' : 'text-[#4A4E69]/40'}`}>
-            <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
+        <div className="flex items-center space-x-2">
+          <button onClick={() => handleBookmark(post.id)} className={`p-2 rounded-xl transition bg-white/40 backdrop-blur-md border border-white/60 shadow-sm hover:bg-white/60 ${isBookmarked ? 'text-[#7C9885] bg-white' : 'text-[#4A4E69]/60'}`}>
+            <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
           </button>
-          <button className="p-2 text-[#4A4E69]/40 hover:text-[#2D3142]"><Share2 className="h-5 w-5" /></button>
+          <button className="p-2 rounded-xl text-[#4A4E69]/60 hover:text-[#2D3142] bg-white/40 backdrop-blur-md border border-white/60 shadow-sm hover:bg-white/60"><Share2 className="h-4 w-4" /></button>
         </div>
       </div>
 
       {/* Nested Comments */}
       {showComments[post.id] && (
-        <div className="mt-8 space-y-6">
+        <div className="mt-2 space-y-6">
           <form onSubmit={onCommentSubmit} className="flex items-center space-x-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-[#4A4E69] font-bold text-sm">
+            <div className="w-10 h-10 rounded-xl bg-white/50 border border-white/60 flex items-center justify-center text-[#4A4E69] font-bold text-sm shadow-sm">
               {currentUser?.initials || "U"}
             </div>
             <div className="flex-1 relative">
@@ -238,36 +236,36 @@ const Post = ({
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder={replyingTo ? `Replying to ${replyingTo.username}...` : "Write a mindful comment..."}
-                className="w-full bg-[#F9FBFF] border-none rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-[#7C9885] outline-none"
+                className="w-full bg-white/40 backdrop-blur-md border border-white/50 rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-[#7C9885] outline-none shadow-sm placeholder:text-[#4A4E69]/50"
               />
               {replyingTo && (
-                <button onClick={() => setReplyingTo(null)} className="absolute right-12 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-500">
+                <button type="button" onClick={() => setReplyingTo(null)} className="absolute right-12 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-500">
                   <X className="h-4 w-4" />
                 </button>
               )}
-              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7C9885] hover:scale-110 transition-transform">
-                <Send className="h-5 w-5" />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7C9885] hover:scale-110 transition-transform bg-white/50 p-1.5 rounded-lg border border-white">
+                <Send className="h-4 w-4" />
               </button>
             </div>
           </form>
 
-          <div className="space-y-4 pl-2 border-l-2 border-gray-50">
+          <div className="space-y-4 pl-2 border-l border-white/60">
             {comments[post.id]?.filter(c => !c.replyToId).map((comment) => (
               <div key={comment.id} className="group">
                 <div className="flex items-start space-x-4 transition-all pb-2">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-400 font-bold text-[10px]">
+                  <div className="w-8 h-8 rounded-lg bg-white/50 border border-white flex items-center justify-center text-[#4A4E69] font-bold text-[10px] shadow-sm">
                     {comment.username?.charAt(0)}
                   </div>
                   <div className="flex-1">
-                    <div className="bg-[#F9FBFF] rounded-[1.25rem] p-4 group-hover:bg-gray-50 transition-colors">
+                    <div className="bg-white/40 backdrop-blur-sm border border-white/60 rounded-[1.25rem] p-4 group-hover:bg-white/60 transition-colors shadow-sm">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-[#2D3142] text-sm">{comment.username}</span>
-                        <span className="text-[10px] text-[#4A4E69]/40">{formatTimestamp(comment.timestamp)}</span>
+                        <span className="font-semibold text-[#2D3142] text-sm">{comment.username}</span>
+                        <span className="text-[10px] text-[#4A4E69]/60">{formatTimestamp(comment.timestamp)}</span>
                       </div>
                       <p className="text-[#4A4E69] text-sm leading-relaxed">{comment.content}</p>
                     </div>
                     <div className="flex items-center space-x-4 mt-2 ml-2">
-                      <button onClick={() => { setReplyingTo(comment); window.scrollTo({ behavior: 'smooth' }); }} className="text-[10px] font-bold text-[#7C9885] hover:underline flex items-center">
+                      <button onClick={() => { setReplyingTo(comment); window.scrollTo({ behavior: 'smooth' }); }} className="text-[11px] font-semibold text-[#7C9885] hover:text-[#5c7564] transition-colors flex items-center">
                         <Reply className="h-3 w-3 mr-1" /> Reply
                       </button>
                     </div>
@@ -276,13 +274,13 @@ const Post = ({
                     <div className="mt-3 ml-6 space-y-3">
                       {comments[post.id]?.filter(r => r.replyToId === comment.id).map(reply => (
                         <div key={reply.id} className="flex items-start space-x-3">
-                          <div className="w-6 h-6 rounded-md bg-emerald-50 flex items-center justify-center text-emerald-400 font-bold text-[8px]">
+                          <div className="w-6 h-6 rounded-md bg-white/50 border border-white flex items-center justify-center text-[#7C9885] font-bold text-[8px] shadow-sm">
                             {reply.username?.charAt(0)}
                           </div>
-                          <div className="flex-1 bg-white border border-gray-50 rounded-xl p-3 shadow-sm">
+                          <div className="flex-1 bg-white/50 backdrop-blur-sm border border-white/60 rounded-xl p-3 shadow-sm hover:bg-white/60 transition-colors">
                             <div className="flex justify-between items-center mb-1">
-                              <span className="font-bold text-[#2D3142] text-[11px]">{reply.username}</span>
-                              <span className="text-[9px] text-[#4A4E69]/40">{formatTimestamp(reply.timestamp)}</span>
+                              <span className="font-semibold text-[#2D3142] text-[12px]">{reply.username}</span>
+                              <span className="text-[9px] text-[#4A4E69]/60">{formatTimestamp(reply.timestamp)}</span>
                             </div>
                             <p className="text-[#4A4E69] text-xs">{reply.content}</p>
                           </div>

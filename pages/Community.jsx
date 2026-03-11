@@ -8,7 +8,7 @@ import {
   getFirestore,
   collection, query, orderBy, onSnapshot,
   addDoc, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove,
-  where, getDocs, setDoc, getDoc, deleteDoc, limit, startAfter
+  where, getDocs, setDoc, getDoc, deleteDoc, limit, startAfter, increment
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import app, { storage } from '../context/firebase/firebase';
@@ -204,6 +204,20 @@ export default function CommunityPage() {
       console.error("Error loading more posts:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    
+    // Auto update when scrolled to top
+    if (scrollTop === 0 && !isLoading) {
+      fetchInitialPosts();
+    }
+    
+    // Infinite scroll when near bottom (100px threshold)
+    if (scrollHeight - scrollTop <= clientHeight + 100 && !isLoading && hasMore) {
+      loadMorePosts();
     }
   };
 
@@ -413,8 +427,16 @@ export default function CommunityPage() {
       });
 
       await updateDoc(doc(db, "posts", postId), {
-        comments: (posts.find(p => p.id === postId)?.comments || 0) + 1
+        comments: increment(1)
       });
+      
+      // Optimistic Local State Update
+      setPosts(prevPosts => prevPosts.map(p => {
+        if (p.id === postId) {
+          return { ...p, comments: (p.comments || 0) + 1 };
+        }
+        return p;
+      }));
 
     } catch (error) {
       console.error("Error adding comment: ", error);
@@ -572,8 +594,13 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className={`min-h-screen pt-32 ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-      <div className="flex h-screen overflow-hidden">
+    <div className={`h-[100dvh] relative overflow-hidden ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-[#f4f7f6] text-gray-900'}`}>
+      {/* Dynamic Background Elements for Glassmorphism */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#7C9885]/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 pointer-events-none"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-200/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 pointer-events-none"></div>
+      <div className="absolute bottom-[-20%] left-[20%] w-[40%] h-[40%] bg-purple-200/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 pointer-events-none"></div>
+      
+      <div className="flex h-full pt-24 overflow-hidden relative z-10">
         {/* Sidebar and content here */}
         {/* Sidebar - Bookmarks and Navigation */}
         <Sidebar
@@ -588,25 +615,28 @@ export default function CommunityPage() {
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent hover:scrollbar-thumb-gray-300">
+        <div className="flex-1 flex flex-col overflow-hidden relative">
           {/* Header */}
 
           {/* Main Content with Posts */}
-          <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F9FBFF]">
+          <main 
+            className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent hover:scrollbar-thumb-gray-300"
+            onScroll={handleScroll}
+          >
             <div className="max-w-3xl mx-auto space-y-8">
               <div className="flex justify-between items-end mb-8">
                 <div>
                   <h2 className="text-3xl font-bold text-[#2D3142] mb-2">Hive Network</h2>
                   <p className="text-[#4A4E69] font-light">Join 10k+ people finding strength together.</p>
                 </div>
-                <div className="flex items-center space-x-2 bg-white/50 backdrop-blur-md p-1 rounded-full border border-gray-100 shadow-sm">
+                <div className="flex items-center space-x-2 bg-white/30 backdrop-blur-xl p-1.5 rounded-2xl border border-white/50 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
                   {['all', 'my-posts', 'liked', 'bookmarked'].map(tab => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${activeTab === tab
-                        ? 'bg-[#7C9885] text-white shadow-md'
-                        : 'text-[#4A4E69] hover:bg-gray-100'
+                      className={`px-5 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${activeTab === tab
+                        ? 'bg-white text-[#2D3142] shadow-sm'
+                        : 'text-[#4A4E69] hover:bg-white/40'
                         }`}
                     >
                       {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
@@ -619,26 +649,31 @@ export default function CommunityPage() {
               {currentUser && activeTab === 'all' && (
                 <div
                   onClick={() => setShowCreateModal(true)}
-                  className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] flex items-center space-x-6 cursor-pointer hover:shadow-lg transition-all group active:scale-[0.98]"
+                  className="bg-white/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/60 shadow-[0_8px_32px_rgba(31,38,135,0.04)] flex items-center space-x-6 cursor-pointer hover:bg-white/50 hover:shadow-lg transition-all group active:scale-[0.98]"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-[#7C9885]/10 flex items-center justify-center text-[#7C9885] group-hover:scale-110 transition-transform">
-                    <Plus className="h-6 w-6" />
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C9885]/80 to-[#4A4E69]/80 flex items-center justify-center text-white group-hover:scale-105 transition-transform shadow-sm">
+                    <Plus className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-lg font-light text-[#4A4E69]/60 italic">What's your story today, {currentUser.username.split(' ')[0]}?</p>
+                    <p className="text-base font-medium text-[#4A4E69] opacity-80">What's your story today, {currentUser.username.split(' ')[0]}?</p>
                   </div>
-                  <div className="px-6 py-2 bg-[#F9FBFF] rounded-xl text-[10px] font-black text-[#7C9885] uppercase tracking-widest group-hover:bg-[#7C9885] group-hover:text-white transition-colors">
+                  <div className="px-5 py-2 bg-white/50 backdrop-blur-sm rounded-lg text-xs font-bold text-[#7C9885] group-hover:bg-[#7C9885] group-hover:text-white transition-colors border border-white/40">
                     Post Story
                   </div>
                 </div>
               )}
 
-              {filteredPosts.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm">
-                  <div className="bg-gray-50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <MessageCircle className="h-8 w-8 text-gray-300" />
+              {isLoading && filteredPosts.length === 0 ? (
+                <div className="text-center py-20 bg-white/40 backdrop-blur-xl rounded-[2rem] border border-white/60 shadow-sm flex flex-col items-center justify-center">
+                  <div className="w-10 h-10 border-4 border-[#7C9885]/30 border-t-[#7C9885] rounded-full animate-spin mb-4"></div>
+                  <p className="text-[#4A4E69] font-medium animate-pulse">Loading community posts...</p>
+                </div>
+              ) : filteredPosts.length === 0 ? (
+                <div className="text-center py-20 bg-white/40 backdrop-blur-xl rounded-[2rem] border border-white/60 shadow-sm">
+                  <div className="bg-white/50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/60">
+                    <MessageCircle className="h-8 w-8 text-[#4A4E69]/40" />
                   </div>
-                  <p className="text-[#4A4E69] font-light">
+                  <p className="text-[#4A4E69] font-medium">
                     {activeTab === "all"
                       ? "No posts yet. Be the first to share something!"
                       : "No posts found for this category."}
@@ -680,15 +715,9 @@ export default function CommunityPage() {
                     ))}
                   </div>
 
-                  {hasMore && (
-                    <div className="text-center pt-8">
-                      <button
-                        onClick={loadMorePosts}
-                        disabled={isLoading}
-                        className="bg-white border border-[#7C9885]/20 text-[#7C9885] px-8 py-3 rounded-2xl text-sm font-bold hover:bg-[#7C9885] hover:text-white transition-all shadow-sm active:scale-95 disabled:opacity-50"
-                      >
-                        {isLoading ? "Loading..." : "Load More Posts"}
-                      </button>
+                  {isLoading && hasMore && (
+                    <div className="text-center pt-6 pb-2">
+                      <p className="text-[#7C9885] text-sm font-bold animate-pulse">Loading more souls...</p>
                     </div>
                   )}
                 </>
