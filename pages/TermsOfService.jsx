@@ -10,17 +10,17 @@ export const TermsOfService = () => {
       </p>
 
       <p className="mb-6">
-        Welcome to <strong>Vaam</strong>. By using our platform, you agree to the following terms and conditions. Please read them carefully.
+        Welcome to <strong>Mindwell</strong>. By using our platform, you agree to the following terms and conditions. Please read them carefully.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">1. Acceptance of Terms</h2>
       <p className="mb-6">
-        By accessing or using Vaam, you agree to be bound by these Terms of Service and our Privacy Policy.
+        By accessing or using Mindwell, you agree to be bound by these Terms of Service and our Privacy Policy.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">2. Eligibility</h2>
       <p className="mb-6">
-        You must be at least 16 years old (or the legal age in your jurisdiction) to use Vaam.
+        You must be at least 16 years old (or the legal age in your jurisdiction) to use Mindwell.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">3. User Conduct</h2>
@@ -32,7 +32,7 @@ export const TermsOfService = () => {
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">4. Intellectual Property</h2>
       <p className="mb-6">
-        All content on Vaam is owned by us or our licensors. You may not reproduce or distribute our content without permission.
+        All content on Mindwell is owned by us or our licensors. You may not reproduce or distribute our content without permission.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">5. Termination</h2>
@@ -42,7 +42,7 @@ export const TermsOfService = () => {
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">6. Disclaimers</h2>
       <p className="mb-6">
-        Vaam does not provide professional medical advice. Our services are for informational and self-support purposes only.
+        Mindwell does not provide professional medical advice. Our services are for informational and self-support purposes only.
       </p>
       <p className="mb-6">
         Our platform integrates AI-driven tools that can support mental wellness. Studies like <a className="text-purple-600 underline" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10198573/" target="_blank" rel="noopener noreferrer">this one</a> suggest AI can offer helpful emotional support, although it is not a substitute for professional help.
@@ -51,12 +51,12 @@ export const TermsOfService = () => {
         Additionally, our design employs a blue-to-purple gradient, which according to <a className="text-purple-600 underline" href="https://www.frontiersin.org/articles/10.3389/fpsyg.2020.01274/full" target="_blank" rel="noopener noreferrer">this research</a>, may help induce calmness and reduce emotional distress.
       </p>
       <p className="mb-6">
-        The wellness resources provided on the platform are curated by Vaam owners. Their use is at your own discretion and responsibility.
+        The wellness resources provided on the platform are curated by Mindwell owners. Their use is at your own discretion and responsibility.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">7. Limitation of Liability</h2>
       <p className="mb-6">
-        We are not liable for any damages arising from your use of Vaam, to the maximum extent permitted by law.
+        We are not liable for any damages arising from your use of Mindwell, to the maximum extent permitted by law.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">8. Changes to Terms</h2>

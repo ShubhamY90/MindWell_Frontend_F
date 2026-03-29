@@ -40,7 +40,7 @@ const PrivacyPolicy = () => {
         <li><strong>Deletion:</strong> Request deletion of your account and data</li>
         <li><strong>Opt-out:</strong> Disable non-essential tracking</li>
       </ul>
-      <p className="mb-6">To exercise your rights, email us at <a href="mailto:vaam319@gmail.com" className="text-purple-600 underline">vaam319@gmail.com</a></p>
+      <p className="mb-6">To exercise your rights, email us at <a href="mailto:vaam319@gmail.com" className="text-purple-600 underline">mindwell.app@gmail.com</a></p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">4. Data Protection and Security</h2>
       <ul className="list-disc list-inside mb-6">
@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">6. Community Safety</h2>
-      <p className="mb-2">Posts in the Vaam community are visible to other users. Use discretion when sharing personal details.</p>
+      <p className="mb-2">Posts in the Mindwell community are visible to other users. Use discretion when sharing personal details.</p>
       <p className="mb-6">While we moderate for safety, users are responsible for their own posts.</p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">7. Data Sharing</h2>
@@ -78,7 +78,7 @@ const PrivacyPolicy = () => {
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">10. Minors’ Privacy</h2>
       <p className="mb-6">
-        Vaam is not for users under 16 years (or the local legal age). Accounts found belonging to minors will be removed.
+        Mindwell is not for users under 16 years (or the local legal age). Accounts found belonging to minors will be removed.
       </p>
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">11. International Data Transfers</h2>
@@ -93,8 +93,8 @@ const PrivacyPolicy = () => {
 
       <h2 className="text-2xl font-semibold mt-10 mb-4">13. Contact Us</h2>
       <p className="mb-2 font-medium">Privacy Officer</p>
-      <p className="mb-1">Vaam</p>
-      <p>Email: <a href="mailto:vaam319@gmail.com" className="text-purple-600 underline">vaam319@gmail.com</a></p>
+      <p className="mb-1">Mindwell</p>
+      <p>Email: <a href="mailto:vaam319@gmail.com" className="text-purple-600 underline">mindwell.app@gmail.com</a></p>
     </div>
   );
 };

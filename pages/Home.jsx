@@ -552,7 +552,7 @@ export default function Home() {
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-[#2D3142] mb-8">Guided by Science,<br />Driven by Heart</h2>
               <p className="text-[#4A4E69] text-xl font-light leading-relaxed mb-12">
-                Vaam was founded on the belief that premium mental health tools shouldn't be a luxury. We've built a sanctuary where technology serves the soul.
+                Mindwell was founded on the belief that premium mental health tools shouldn't be a luxury. We've built a sanctuary where technology serves the soul.
               </p>
 
               <div className="space-y-8">
@@ -628,7 +628,7 @@ export default function Home() {
           >
             <h2 className="text-4xl md:text-5xl font-bold text-[#2D3142] mb-6 tracking-tight">Meet the Founders</h2>
             <p className="text-[#4A4E69] text-xl font-light leading-relaxed mb-10">
-              Discover the minds and the mission behind Vaam. We are a team of passionate engineers committed to democratizing mental wellness.
+              Discover the minds and the mission behind Mindwell. We are a team of passionate engineers committed to democratizing mental wellness.
             </p>
             <Link
               to="/founders"
@@ -651,7 +651,7 @@ export default function Home() {
                   <Brain className="h-3 sm:h-4 lg:h-5 w-3 sm:w-4 lg:w-5 text-white" />
                 </div>
                 <span className="text-sm sm:text-base lg:text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Vaam
+                  Mindwell
                 </span>
               </div>
               <p className="text-gray-600 text-xs sm:text-sm lg:text-base">

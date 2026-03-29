@@ -67,7 +67,7 @@ const Founders = () => {
                 className="text-center mb-16 z-10"
             >
                 <h1 className="text-5xl md:text-6xl font-black text-[#2D3142] tracking-tight mb-4">
-                    Meet the Minds Behind <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Vaam</span>
+                    Meet the Minds Behind <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Mindwell</span>
                 </h1>
                 <p className="text-gray-500 font-medium text-lg max-w-2xl mx-auto px-4">
                     United by a vision to make premium mental wellness accessible to everyone.
